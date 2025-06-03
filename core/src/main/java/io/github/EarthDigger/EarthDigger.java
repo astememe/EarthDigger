@@ -13,12 +13,15 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class EarthDigger extends ApplicationAdapter {
     int screenSizeX = 50;
-    int screensizeY = 10;
+    int screensizeY = 40;
+    int salto = 1;
+    int gravedad = 9;
     Texture pinyaTexture;
     SpriteBatch spriteBatch;
     Viewport viewport;
     Camera camera;
     Sprite pinya;
+
 
     @Override
     public void create () {
@@ -45,8 +48,11 @@ public class EarthDigger extends ApplicationAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             pinya.setX(pinya.getX() + (float)0.5);
         }
-        spriteBatch.end();
+        if (Gdx.input.isButtonJustPressed(Input.Keys.W)){
 
+        }
+
+        spriteBatch.end();
     }
 
     @Override
