@@ -1,6 +1,7 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
@@ -8,42 +9,42 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class EarthDigger extends ApplicationAdapter {
-    int screenSizeX = 50;
-    int screensizeY = 40;
+public class EarthDigger extends ApplicationAdapter implements ApplicationListener {
+    int screenSizeX = 100;
+    int screensizeY = 100;
     float velocidadY = 0;
     float gravedad = -100;
     boolean saltando = false;
     float groundY = 5;
+    Texture backgroundTexture;
     Texture pinyaTexture;
     SpriteBatch spriteBatch;
     Viewport viewport;
-    Camera camera;
+    OrthographicCamera camera;
     Sprite pinya;
-
+    Sprite background;
 
     @Override
     public void create () {
-        pinyaTexture = new Texture("piña_ttrans.png");
+        backgroundTexture = new Texture("frutas.jpg");
+        background = new Sprite(backgroundTexture);
+        background.setSize(400,100);
+        background.setPosition(0, -20);
+        pinyaTexture = new Texture("images.jpg");
         pinya = new Sprite(pinyaTexture);
         pinya.setSize(3,5);
         camera = new OrthographicCamera();
-        viewport = new FitViewport(screenSizeX, screensizeY, camera);
-        camera.position.x=screenSizeX/2f;
-        camera.position.y=screensizeY/2f;
+        viewport = new ExtendViewport(screenSizeX, screensizeY, camera);
         spriteBatch = new SpriteBatch();
     }
 
     @Override
     public void render () {
-        ScreenUtils.clear(Color.BLACK);
-        viewport.apply();
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
-        spriteBatch.begin();
-        pinya.draw(spriteBatch);
+        draw();
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             pinya.setX(pinya.getX() - (float)0.5);
         }
@@ -65,12 +66,49 @@ public class EarthDigger extends ApplicationAdapter {
             saltando = false;
         }
 
+
+    }
+
+    public void draw() {
+        ScreenUtils.clear(Color.BLACK);
+        viewport.apply();
+
+        // POSICION DE CÁMARA
+        camera.position.x = pinya.getX() + pinya.getWidth() / 2f;
+        camera.position.y = pinya.getY() + pinya.getHeight() / 2f + 30f;
+
+        // POSICION DE CÁMARA FIJA CUANDO LLEGA AL BORDE DE LA PANTALLA
+        if (camera.position.x < viewport.getWorldWidth() / 2f) {
+            camera.position.x = viewport.getWorldWidth() / 2f;
+        }
+        if (camera.position.x > background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f) {
+            camera.position.x = background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f;
+        }
+        camera.update();
+
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+
+        //CARGAR SPRITES
+        spriteBatch.begin();
+        background.draw(spriteBatch);
+        pinya.draw(spriteBatch);
         spriteBatch.end();
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        camera.update();
     }
 
     @Override
