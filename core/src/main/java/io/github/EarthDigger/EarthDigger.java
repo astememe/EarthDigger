@@ -31,11 +31,11 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     @Override
     public void create () {
         float DeltaTime = 0;
-        backgroundTexture = new Texture("frutas.jpg");
+        backgroundTexture = new Texture("césped.png");
         background = new Sprite(backgroundTexture);
         background.setSize(400,100);
         background.setPosition(0, -20);
-        pinyaTexture = new Texture("images.jpg");
+        pinyaTexture = new Texture("HACHA.png");
         pinya = new Sprite(pinyaTexture);
         pinya.setSize(3,5);
         camera = new OrthographicCamera();
