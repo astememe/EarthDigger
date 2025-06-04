@@ -52,26 +52,16 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             Gdx.app.exit();
         }
-        // controles 1: W A D
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            pinya.setX(pinya.getX() - delta*2);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            pinya.setX(pinya.getX() + delta*2);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W) && !saltando) {
-            velocidadY = 50;
-            saltando = true;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            pinya.setX(pinya.getX() - delta*20);
         }
 
-        // controles 2: <- ↑ ->
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            pinya.setX(pinya.getX() + (float)0.5);
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            pinya.setX(pinya.getX() + delta*20);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            pinya.setX(pinya.getX() - (float)0.5);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && !saltando) {
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W) && !saltando || Gdx.input.isKeyJustPressed(Input.Keys.UP) && !saltando){
             velocidadY = 50;
             saltando = true;
         }
