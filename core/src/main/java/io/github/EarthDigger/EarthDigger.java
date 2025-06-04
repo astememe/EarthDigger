@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+
 public class EarthDigger extends ApplicationAdapter implements ApplicationListener {
     int screenSizeX = 100;
     int screensizeY = 100;
@@ -26,16 +27,15 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     OrthographicCamera camera;
     Sprite pinya;
     Sprite background;
-    float DeltaTime = 0;
 
     @Override
     public void create () {
         float DeltaTime = 0;
-        backgroundTexture = new Texture("césped.png");
+        backgroundTexture = new Texture("piedra.png");
         background = new Sprite(backgroundTexture);
         background.setSize(400,100);
         background.setPosition(0, -20);
-        pinyaTexture = new Texture("HACHA.png");
+        pinyaTexture = new Texture("easteregg.png");
         pinya = new Sprite(pinyaTexture);
         pinya.setSize(3,5);
         camera = new OrthographicCamera();
@@ -46,8 +46,9 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     @Override
     public void render () {
         draw();
+        float delta = 0;
 
-        float delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
+        delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
 
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             Gdx.app.exit();
@@ -74,6 +75,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
             velocidadY = 0;
             saltando = false;
         }
+
         System.out.println(delta);
 
     }
