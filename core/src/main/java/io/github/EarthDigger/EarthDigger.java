@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class EarthDigger extends ApplicationAdapter implements ApplicationListener {
@@ -19,7 +18,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     float velocidadY = 0;
     float gravedad = -100;
     boolean saltando = false;
-    float groundY = 5;
+    float groundY = 5; // Cambiar por posición del bloque
     Texture backgroundTexture;
     Texture pinyaTexture;
     SpriteBatch spriteBatch;
@@ -27,9 +26,11 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     OrthographicCamera camera;
     Sprite pinya;
     Sprite background;
+    float DeltaTime = 0;
 
     @Override
     public void create () {
+        float DeltaTime = 0;
         backgroundTexture = new Texture("frutas.jpg");
         background = new Sprite(backgroundTexture);
         background.setSize(400,100);
@@ -45,18 +46,36 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     @Override
     public void render () {
         draw();
+
+        float delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
+
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            Gdx.app.exit();
+        }
+        // controles 1: W A D
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            pinya.setX(pinya.getX() - (float)0.5);
+            pinya.setX(pinya.getX() - delta*2);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            pinya.setX(pinya.getX() + (float)0.5);
+            pinya.setX(pinya.getX() + delta*2);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) && !saltando) {
             velocidadY = 50;
             saltando = true;
         }
 
-        float delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
+        // controles 2: <- ↑ ->
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            pinya.setX(pinya.getX() + (float)0.5);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            pinya.setX(pinya.getX() - (float)0.5);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && !saltando) {
+            velocidadY = 50;
+            saltando = true;
+        }
+
         velocidadY += gravedad * delta; // -100 * 0.016 -> velocidadY = -1.67 (Disminuye la vecolidad por cada frame que pasa hasya llegar a 0)
         pinya.setY(pinya.getY() + velocidadY * delta); // Cuando se resta y llega a 0, la posición de Y se le resta para que baje haciendo que sea negatico y logre bajar.)
 
@@ -65,7 +84,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
             velocidadY = 0;
             saltando = false;
         }
-
+        System.out.println(delta);
 
     }
 
@@ -75,7 +94,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
 
         // POSICION DE CÁMARA
         camera.position.x = pinya.getX() + pinya.getWidth() / 2f;
-        camera.position.y = pinya.getY() + pinya.getHeight() / 2f + 30f;
+        camera.position.y = pinya.getY() + pinya.getHeight() / 2f + 15f;
 
         // POSICION DE CÁMARA FIJA CUANDO LLEGA AL BORDE DE LA PANTALLA
         if (camera.position.x < viewport.getWorldWidth() / 2f) {
