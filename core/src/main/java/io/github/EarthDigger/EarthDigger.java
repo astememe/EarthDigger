@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -29,7 +30,9 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     OrthographicCamera camera;
     Sprite personaje;
     Sprite background;
-
+    float x, y;
+    Rectangle personajeHitBox;
+    Rectangle bloqueHitBox;
 
     @Override
     public void create () {
@@ -40,14 +43,14 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         personajeTexture = new Texture("PERSONAJE PRUEBA.png");
         personaje = new Sprite(personajeTexture);
         personaje.setSize(16,16);
+        personajeHitBox = new Rectangle(personaje.getX(), personaje.getY(), 16, 16);
+        bloqueHitBox = new Rectangle(0, groundY-16, 15, 15);
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(screenSizeX, screensizeY, camera);
         spriteBatch = new SpriteBatch();
-
         dirtTexture = new Texture("césped.png");
         dirt = new Sprite(dirtTexture);
         dirt.setSize(16,16);
-
 
     }
 
@@ -56,13 +59,16 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
         draw();
         logic();
-        System.out.println(delta);
+        //System.out.println(delta);
+        System.out.println(bloqueHitBox.overlaps(personajeHitBox));
 
     }
 
     public void draw() {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
+
+
 
         // POSICION DE CÁMARA
         camera.position.x = personaje.getX() + personaje.getWidth() / 2f;
@@ -79,6 +85,8 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         camera.update();
 
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+
+
 
         //CARGAR SPRITES
         spriteBatch.begin();
