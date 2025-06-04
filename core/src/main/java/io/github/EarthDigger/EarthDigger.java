@@ -30,7 +30,6 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     OrthographicCamera camera;
     Sprite personaje;
     Sprite background;
-    float x, y;
     Rectangle personajeHitBox;
     Rectangle bloqueHitBox;
 
@@ -44,7 +43,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         personaje = new Sprite(personajeTexture);
         personaje.setSize(16,16);
         personajeHitBox = new Rectangle(personaje.getX(), personaje.getY(), 16, 16);
-        bloqueHitBox = new Rectangle(0, groundY-16, 15, 15);
+        bloqueHitBox = new Rectangle(0, groundY, 16, 16);
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(screenSizeX, screensizeY, camera);
         spriteBatch = new SpriteBatch();
@@ -125,6 +124,8 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
             velocidadY = 0;
             saltando = false;
         }
+        personajeHitBox.setPosition(personaje.getX(), personaje.getY());
+
     }
 
     @Override
