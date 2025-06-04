@@ -91,11 +91,14 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         spriteBatch.begin();
         background.draw(spriteBatch);
         personaje.draw(spriteBatch);
+
         for (int i = 0; i < background.getWidth(); i+=16) {
             dirt.draw(spriteBatch);
             dirt.setPosition(i, groundY-16);
         }
         spriteBatch.end();
+
+
     }
 
     public void logic() {
