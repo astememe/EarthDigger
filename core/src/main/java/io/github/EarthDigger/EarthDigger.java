@@ -34,7 +34,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         background = new Sprite(backgroundTexture);
         background.setSize(400,100);
         background.setPosition(0, -20);
-        pinyaTexture = new Texture("images.jpg");
+        pinyaTexture = new Texture("PERSONAJE PRUEBA.png");
         pinya = new Sprite(pinyaTexture);
         pinya.setSize(3,5);
         camera = new OrthographicCamera();
