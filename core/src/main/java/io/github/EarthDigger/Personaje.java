@@ -34,7 +34,7 @@ public class Personaje {
 
     public void saltar() {
         if (cantSaltos < 2) {
-            velocidadY = 65;
+            velocidadY = 70;
             saltando = true;
             cantSaltos++;
         }
@@ -44,11 +44,19 @@ public class Personaje {
         velocidadY += gravedad * delta;
         sprite.setY(sprite.getY() + velocidadY * delta);
 
+        int gravedadLimite = -250;
+        if (velocidadY <= 0) {
+            gravedad -= 10;
+            if (gravedad == -250){
+                gravedad = gravedadLimite;
+            }
+        }
         if (sprite.getY() <= groundY) {
             sprite.setY(groundY);
             velocidadY = 0;
             cantSaltos = 0;
             saltando = false;
+            gravedad = -100;
         }
 
         personajeHitbox.setPosition(sprite.getX(), sprite.getY());
