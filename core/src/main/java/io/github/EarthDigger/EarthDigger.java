@@ -9,17 +9,32 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class EarthDigger extends ApplicationAdapter implements ApplicationListener {
+    Array<Rectangle> bloques;
+
     float delta;
     int screenSizeX = 320;
     int screensizeY = 48;
-    float groundY = 0;
+    float groundY = 175;
     boolean paused = true;
     Viewport viewport;
     OrthographicCamera camera;
@@ -33,13 +48,27 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
 
     @Override
     public void create () {
+        bloques = new Array<>();
+
+        TiledMap map = new TmxMapLoader().load("MapaEarthDigger.tmx");
+        MapLayer capaColisiones = map.getLayers().get("colisiones");
+
+        if (capaColisiones != null) {
+            for (MapObject objeto : capaColisiones.getObjects()) {
+                if (objeto instanceof RectangleMapObject) {
+                    Rectangle rect = ((RectangleMapObject) objeto).getRectangle();
+                    bloques.add(rect);
+                }
+            }
+        }
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.update();
         viewport = new ExtendViewport(screenSizeX, screensizeY, camera);
         spriteBatch = new SpriteBatch();
 
-        //Assets.loadTextures(groundY);
+        Assets.loadTextures(groundY);
         gameMap = new TiledGameMap();
         personaje = Assets.personaje;
         //background = Assets.background;
@@ -48,24 +77,24 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         //bloqueHitBox = Assets.bloqueHitBox;
     }
 
+
+
     @Override
     public void render () {
-        super.render();
         delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
         draw();
         logic();
-
         if (paused) {
             if (Gdx.input.isKeyPressed(Input.Keys.P)) {
                 paused = false;
             }
         }
-
+        System.out.println(gameMap.getLayers().getCount());
 
 
         gameMap.render(camera);
 
-        System.out.println(delta);
+        //System.out.println(delta);
         //System.out.println(bloqueHitBox.overlaps(personajeHitBox));
         //System.out.println(personaje.getY());
 
@@ -124,7 +153,15 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
             personaje.saltar();
         }
 
-        personaje.reiniciarSaltos(delta);
+        personaje.reiniciarSaltos(delta, bloques);
+
+        for (Rectangle bloque : bloques) {
+            if (bloque.overlaps(personajeHitBox)) {
+                System.out.println("¡Colisión detectada!");
+                // Aquí puedes frenar el movimiento, aplicar lógica de colisión, etc.
+            }
+        }
+
 
     }
 

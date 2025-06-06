@@ -1,8 +1,9 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 
-public abstract class GameMap {
+public abstract class GameMap extends TiledMap {
 
     public abstract void render (OrthographicCamera camera);
     public abstract void update (float delta);
