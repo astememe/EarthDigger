@@ -3,8 +3,8 @@ package io.github.EarthDigger;
 public enum TileType {
 
     Cesped(1, true, "Cesped"),
-    Tierra(2, true, "Tierra"),
-    Piedra(3, true, "Piedra");
+    Tierra(3, true, "Tierra"),
+    Piedra(2, true, "Piedra");
 
 
 

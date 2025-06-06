@@ -25,7 +25,7 @@ public class Personaje {
         this.sprite = new Sprite(texture);
         this.sprite.setSize(ancho, alto);
         this.personajeHitbox = new Rectangle(sprite.getX(), sprite.getY(), ancho, alto);
-        this.sprite.setY(175);
+        this.sprite.setY(200);
         //this.groundY = groundY;
     }
 

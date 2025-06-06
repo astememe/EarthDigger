@@ -11,12 +11,12 @@ public class TiledGameMap extends GameMap {
     OrthogonalTiledMapRenderer tiledMapRenderer;
 
     public TiledGameMap() {
-        tiledMap = new TmxMapLoader().load("MapaEarthDigger.tmx");
+        tiledMap = new TmxMapLoader().load("MapaConCollision.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
 
     public TiledMapTileLayer getCapaColision() {
-        return (TiledMapTileLayer) tiledMap.getLayers().get("collision");
+        return (TiledMapTileLayer) tiledMap.getLayers().get("Capa de patrones 1");
     }
 
     @Override

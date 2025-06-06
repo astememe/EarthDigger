@@ -50,8 +50,8 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     public void create () {
         bloques = new Array<>();
 
-        TiledMap map = new TmxMapLoader().load("MapaEarthDigger.tmx");
-        MapLayer capaColisiones = map.getLayers().get("colisiones");
+        TiledMap map = new TmxMapLoader().load("MapaConCollision.tmx");
+        MapLayer capaColisiones = map.getLayers().get("Capa de patrones 1");
 
         if (capaColisiones != null) {
             for (MapObject objeto : capaColisiones.getObjects()) {
