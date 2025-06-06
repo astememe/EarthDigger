@@ -19,7 +19,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     float delta;
     int screenSizeX = 320;
     int screensizeY = 48;
-    float groundY = get.;
+    float groundY = 0;
     boolean paused = true;
     Viewport viewport;
     OrthographicCamera camera;
