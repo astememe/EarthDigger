@@ -89,7 +89,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
                 paused = false;
             }
         }
-
+        System.out.println(gameMap.getLayers().getCount());
 
 
         gameMap.render(camera);
