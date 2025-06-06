@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -17,89 +19,92 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     float delta;
     int screenSizeX = 320;
     int screensizeY = 48;
-    float velocidadY = 0;
-    float gravedad = -100;
-    boolean saltando = false;
-    float groundY = 30; // Cambiar por posición del bloque
-    Texture dirtTexture;
-    Sprite dirt;
-    Texture backgroundTexture;
-    Texture personajeTexture;
-    SpriteBatch spriteBatch;
+    float groundY = get.;
+    boolean paused = true;
     Viewport viewport;
     OrthographicCamera camera;
-    Sprite personaje;
-    Sprite background;
-    float x, y;
+    Personaje personaje;
+    SpriteBatch spriteBatch;
+    //Sprite dirt;
+    //Sprite background;
     Rectangle personajeHitBox;
-    Rectangle bloqueHitBox;
+    //Rectangle bloqueHitBox;
+    GameMap gameMap;
 
     @Override
     public void create () {
-        backgroundTexture = new Texture("Flux_Dev_A_sweeping_cinematic_landscape_with_dramatic_clouds_t_3.jpg");
-        background = new Sprite(backgroundTexture);
-        background.setSize(1600,800);
-        background.setPosition(0, -groundY*2);
-        personajeTexture = new Texture("PERSONAJE PRUEBA.png");
-        personaje = new Sprite(personajeTexture);
-        personaje.setSize(16,16);
-        personajeHitBox = new Rectangle(personaje.getX(), personaje.getY(), 16, 16);
-        bloqueHitBox = new Rectangle(0, groundY-16, 15, 15);
         camera = new OrthographicCamera();
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.update();
         viewport = new ExtendViewport(screenSizeX, screensizeY, camera);
         spriteBatch = new SpriteBatch();
-        dirtTexture = new Texture("césped.png");
-        dirt = new Sprite(dirtTexture);
-        dirt.setSize(16,16);
 
+        //Assets.loadTextures(groundY);
+        gameMap = new TiledGameMap();
+        personaje = Assets.personaje;
+        //background = Assets.background;
+        //dirt = Assets.dirt;
+        personajeHitBox = Assets.personajeHitBox;
+        //bloqueHitBox = Assets.bloqueHitBox;
     }
 
     @Override
     public void render () {
+        super.render();
         delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
         draw();
         logic();
-        //System.out.println(delta);
-        System.out.println(bloqueHitBox.overlaps(personajeHitBox));
+
+        if (paused) {
+            if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+                paused = false;
+            }
+        }
+
+
+
+        gameMap.render(camera);
+
+        System.out.println(delta);
+        //System.out.println(bloqueHitBox.overlaps(personajeHitBox));
+        //System.out.println(personaje.getY());
 
     }
 
     public void draw() {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
+        personajeHitBox.setPosition(personaje.getX(), personaje.getY());
 
 
 
         // POSICION DE CÁMARA
-        camera.position.x = personaje.getX() + personaje.getWidth() / 2f;
-        camera.position.y = personaje.getHeight() / 2f + personaje.getY();
+        camera.position.x = personaje.getSprite().getX() + personaje.getSprite().getWidth() / 2f;
+        camera.position.y = personaje.getSprite().getY() + personaje.getSprite().getHeight() / 2f;
 
         // POSICION DE CÁMARA FIJA CUANDO LLEGA AL BORDE DE LA PANTALLA
         if (camera.position.x < viewport.getWorldWidth() / 2f) {
             camera.position.x = viewport.getWorldWidth() / 2f;
         }
-        if (camera.position.x > background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f) {
-            camera.position.x = background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f;
-        }
+        //if (camera.position.x > background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f) {
+        //    camera.position.x = background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f;
+        //}
 
         camera.update();
 
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
 
-
-
         //CARGAR SPRITES
         spriteBatch.begin();
-        background.draw(spriteBatch);
-        personaje.draw(spriteBatch);
+        //background.draw(spriteBatch);
+        personaje.dibujar(spriteBatch);
 
-        for (int i = 0; i < background.getWidth(); i+=16) {
-            dirt.draw(spriteBatch);
-            dirt.setPosition(i, groundY-16);
-        }
+
+        //for (int i = 0; i < background.getWidth(); i+=16) {
+        //    dirt.draw(spriteBatch);
+        //    dirt.setPosition(i, groundY-16);
+        //}
         spriteBatch.end();
-
-
     }
 
     public void logic() {
@@ -108,31 +113,23 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            personaje.setX(personaje.getX() - delta*20);
+            personaje.moverIzquierda(delta);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            personaje.setX(personaje.getX() + delta*20);
+            personaje.moverDerecha(delta);
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W) && !saltando || Gdx.input.isKeyJustPressed(Input.Keys.UP) && !saltando){
-            velocidadY = 50;
-            saltando = true;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            personaje.saltar();
         }
 
-        velocidadY += gravedad * delta; // -100 * 0.016 -> velocidadY = -1.67 (Disminuye la vecolidad por cada frame que pasa hasya llegar a 0)
-        personaje.setY(personaje.getY() + velocidadY * delta); // Cuando se resta y llega a 0, la posición de Y se le resta para que baje haciendo que sea negatico y logre bajar.)
+        personaje.reiniciarSaltos(delta);
 
-        if (personaje.getY() <= groundY) {
-            personaje.setY(groundY);
-            velocidadY = 0;
-            saltando = false;
-        }
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
@@ -148,6 +145,7 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
 
     @Override
     public void dispose() {
+        personaje.dispose();
         spriteBatch.dispose();
     }
 }
