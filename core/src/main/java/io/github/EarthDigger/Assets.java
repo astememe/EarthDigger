@@ -26,7 +26,7 @@ public class Assets {
         background.setPosition(0, -groundY * 2);
 
         // Textura del personaje
-        personaje = new Personaje("PERSONAJEQUIETOEXHALAR.png", 16, 16, groundY);
+        personaje = new Personaje("PERSONAJEQUIETOEXHALAR.png", 16, 16);
         personajeHitBox = new Rectangle(personaje.getX(), personaje.getY(), 16, 16);
 
         // Textura de tierra
