@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -17,31 +19,33 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     float delta;
     int screenSizeX = 320;
     int screensizeY = 48;
-    float groundY = 30; // Cambiar por posición del bloque
+    float groundY = get.;
     boolean paused = true;
     Viewport viewport;
     OrthographicCamera camera;
     Personaje personaje;
     SpriteBatch spriteBatch;
-    Sprite dirt;
-    Sprite background;
+    //Sprite dirt;
+    //Sprite background;
     Rectangle personajeHitBox;
-    Rectangle bloqueHitBox;
-
+    //Rectangle bloqueHitBox;
+    GameMap gameMap;
 
     @Override
     public void create () {
         camera = new OrthographicCamera();
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.update();
         viewport = new ExtendViewport(screenSizeX, screensizeY, camera);
         spriteBatch = new SpriteBatch();
 
-        Assets.loadTextures(groundY);
-
+        //Assets.loadTextures(groundY);
+        gameMap = new TiledGameMap();
         personaje = Assets.personaje;
-        background = Assets.background;
-        dirt = Assets.dirt;
+        //background = Assets.background;
+        //dirt = Assets.dirt;
         personajeHitBox = Assets.personajeHitBox;
-        bloqueHitBox = Assets.bloqueHitBox;
+        //bloqueHitBox = Assets.bloqueHitBox;
     }
 
     @Override
@@ -56,6 +60,10 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
                 paused = false;
             }
         }
+
+
+
+        gameMap.render(camera);
 
         System.out.println(delta);
         //System.out.println(bloqueHitBox.overlaps(personajeHitBox));
@@ -78,9 +86,9 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
         if (camera.position.x < viewport.getWorldWidth() / 2f) {
             camera.position.x = viewport.getWorldWidth() / 2f;
         }
-        if (camera.position.x > background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f) {
-            camera.position.x = background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f;
-        }
+        //if (camera.position.x > background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f) {
+        //    camera.position.x = background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f;
+        //}
 
         camera.update();
 
@@ -88,14 +96,14 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
 
         //CARGAR SPRITES
         spriteBatch.begin();
-        background.draw(spriteBatch);
+        //background.draw(spriteBatch);
         personaje.dibujar(spriteBatch);
 
 
-        for (int i = 0; i < background.getWidth(); i+=16) {
-            dirt.draw(spriteBatch);
-            dirt.setPosition(i, groundY-16);
-        }
+        //for (int i = 0; i < background.getWidth(); i+=16) {
+        //    dirt.draw(spriteBatch);
+        //    dirt.setPosition(i, groundY-16);
+        //}
         spriteBatch.end();
     }
 
