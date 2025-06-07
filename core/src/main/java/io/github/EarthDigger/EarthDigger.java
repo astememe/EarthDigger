@@ -1,177 +1,96 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-public class EarthDigger extends ApplicationAdapter implements ApplicationListener {
-    Array<Rectangle> bloques;
-
+public class EarthDigger extends ApplicationAdapter {
+    Array<Bloque> bloques;
     float delta;
     int screenSizeX = 320;
-    int screensizeY = 48;
-    float groundY = 175;
-    boolean paused = true;
+    int screenSizeY = 48;
     Viewport viewport;
     OrthographicCamera camera;
     Personaje personaje;
+
     SpriteBatch spriteBatch;
-    //Sprite dirt;
-    //Sprite background;
-    Rectangle personajeHitBox;
-    //Rectangle bloqueHitBox;
-    GameMap gameMap;
 
     @Override
-    public void create () {
+    public void create() {
         bloques = new Array<>();
-
-        TiledMap map = new TmxMapLoader().load("MapaConCollision.tmx");
-        MapLayer capaColisiones = map.getLayers().get("Capa de patrones 1");
-
-        if (capaColisiones != null) {
-            for (MapObject objeto : capaColisiones.getObjects()) {
-                if (objeto instanceof RectangleMapObject) {
-                    Rectangle rect = ((RectangleMapObject) objeto).getRectangle();
-                    bloques.add(rect);
-                }
-            }
-        }
-
+        personaje = new Personaje("Frames.png", 16, 16);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.update();
-        viewport = new ExtendViewport(screenSizeX, screensizeY, camera);
+        viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
+
         spriteBatch = new SpriteBatch();
 
-        Assets.loadTextures(groundY);
-        gameMap = new TiledGameMap();
-        personaje = Assets.personaje;
-        //background = Assets.background;
-        //dirt = Assets.dirt;
-        personajeHitBox = Assets.personajeHitBox;
-        //bloqueHitBox = Assets.bloqueHitBox;
+        Assets.load();
+
+        int blockSize = 16;
+        int mapWidth = 200;
+
+        // Generar bloques con clase Bloque y texturas de Assets
+        for (int x = 0; x < mapWidth; x++) {
+            bloques.add(new Bloque(x * blockSize, 5 * blockSize, blockSize, blockSize, Assets.cespedTexture));
+
+            for (int y = 1; y < 5; y++) {
+                bloques.add(new Bloque(x * blockSize, y * blockSize, blockSize, blockSize, Assets.tierraTexture));
+            }
+
+            bloques.add(new Bloque(x * blockSize, 0, blockSize, blockSize, Assets.piedraTexture));
+        }
+
+        personaje = new Personaje("Frames.png", 16, 16);
     }
-
-
 
     @Override
-    public void render () {
-        delta = Gdx.graphics.getDeltaTime(); // 0.0167 = 60 FPS
-        draw();
-        logic();
-        if (paused) {
-            if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-                paused = false;
-            }
-        }
-        System.out.println(gameMap.getLayers().getCount());
+    public void render() {
+        delta = Gdx.graphics.getDeltaTime();
 
-
-        gameMap.render(camera);
-
-        //System.out.println(delta);
-        //System.out.println(bloqueHitBox.overlaps(personajeHitBox));
-        //System.out.println(personaje.getY());
-
-    }
-
-    public void draw() {
-        ScreenUtils.clear(Color.BLACK);
-        viewport.apply();
-        personajeHitBox.setPosition(personaje.getX(), personaje.getY());
-
-
-
-        // POSICION DE CÁMARA
-        camera.position.x = personaje.getSprite().getX() + personaje.getSprite().getWidth() / 2f;
-        camera.position.y = personaje.getSprite().getY() + personaje.getSprite().getHeight() / 2f;
-
-        // POSICION DE CÁMARA FIJA CUANDO LLEGA AL BORDE DE LA PANTALLA
-        if (camera.position.x < viewport.getWorldWidth() / 2f) {
-            camera.position.x = viewport.getWorldWidth() / 2f;
-        }
-        //if (camera.position.x > background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f) {
-        //    camera.position.x = background.getX() + background.getWidth() - viewport.getWorldWidth() / 2f;
-        //}
-
-        camera.update();
-
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
-
-        //CARGAR SPRITES
-        spriteBatch.begin();
-        //background.draw(spriteBatch);
-        personaje.dibujar(spriteBatch);
-
-
-        //for (int i = 0; i < background.getWidth(); i+=16) {
-        //    dirt.draw(spriteBatch);
-        //    dirt.setPosition(i, groundY-16);
-        //}
-        spriteBatch.end();
-    }
-
-    public void logic() {
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
-            Gdx.app.exit();
-        }
-
+        // Manejo controles (puedes pasarlo al personaje o manejar aquí)
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             personaje.moverIzquierda(delta);
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             personaje.moverDerecha(delta);
         }
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             personaje.saltar();
         }
 
         personaje.reiniciarSaltos(delta, bloques);
+        personaje.update(delta);
 
-        for (Rectangle bloque : bloques) {
-            if (bloque.overlaps(personajeHitBox)) {
-                System.out.println("¡Colisión detectada!");
-                // Aquí puedes frenar el movimiento, aplicar lógica de colisión, etc.
-            }
+        spriteBatch.begin();
+        personaje.dibujar(spriteBatch);
+        spriteBatch.end();
+
+        ScreenUtils.clear(Color.WHITE);
+        viewport.apply();
+
+        camera.update();
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        spriteBatch.begin();
+
+        camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
+        camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
+
+
+        for (Bloque bloque : bloques) {
+            spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
         }
 
+        personaje.dibujar(spriteBatch);
 
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-
+        spriteBatch.end();
     }
 
     @Override
@@ -184,5 +103,6 @@ public class EarthDigger extends ApplicationAdapter implements ApplicationListen
     public void dispose() {
         personaje.dispose();
         spriteBatch.dispose();
+        Assets.dispose();
     }
 }
