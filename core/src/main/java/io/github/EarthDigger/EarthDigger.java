@@ -40,6 +40,20 @@ public class EarthDigger extends ApplicationAdapter {
         Assets.load();
 
         // Generar bloques con clase Bloque y texturas de Assets
+        //int[][] mapa_forma = mapa.getForma();
+        //mapa_forma[1][0] = 0;
+        //mapa.setForma(mapa_forma);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < mapWidth; j++) {
+                if (mapa.getForma()[i][j] == 1) {
+                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.cespedTexture));
+                } else if (mapa.getForma()[i][j] == 2) {
+                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.tierraTexture));
+                } else if (mapa.getForma()[i][j] == 3) {
+                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.piedraTexture));
+                }
+            }
+        }
 
         personaje = new Personaje("Frames.png", 16, 16);
     }
@@ -59,20 +73,10 @@ public class EarthDigger extends ApplicationAdapter {
             personaje.saltar();
         }
 
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < mapWidth; j++) {
-                if (mapa.getForma()[i][j] == 1) {
-                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.cespedTexture));
-                } else if (mapa.getForma()[i][j] == 2) {
-                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.tierraTexture));
-                } else if (mapa.getForma()[i][j] == 3) {
-                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.piedraTexture));
-                }
-            }
-        }
 
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
+
 
         spriteBatch.begin();
         personaje.dibujar(spriteBatch);
