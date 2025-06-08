@@ -57,6 +57,11 @@ public class EarthDigger extends ApplicationAdapter {
     public void render() {
         delta = Gdx.graphics.getDeltaTime();
 
+        // Salir
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            Gdx.app.exit();
+        }
+
         // Manejo controles (puedes pasarlo al personaje o manejar aquí)
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             personaje.moverIzquierda(delta);

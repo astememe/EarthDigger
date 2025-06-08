@@ -1,7 +1,6 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,6 +16,9 @@ public class Personaje {
     private float gravedadNormal = -100;
     private float gravedadCaida = -300;
     private boolean saltando = false;
+    boolean corriendo = false;
+    private boolean mirandoDerecha = true;
+    private boolean moviendose = false;
     private int cantSaltos = 0;
 
     private Animation<TextureRegion> caminarDerechaAnim;
@@ -27,8 +29,7 @@ public class Personaje {
 
     private float stateTime;
 
-    private boolean mirandoDerecha = true;
-    private boolean moviendose = false;
+
 
     private float posX, posY;
     private float ancho, alto;
