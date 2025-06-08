@@ -7,14 +7,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.Vector;
+
 public class EarthDigger extends ApplicationAdapter {
     Array<Bloque> bloques;
     Mapa mapa;
+    Vector3 mouse_position = new Vector3(0,0,0);
     float delta;
     int screenSizeX = 320;
     int screenSizeY = 48;
@@ -77,7 +82,6 @@ public class EarthDigger extends ApplicationAdapter {
         viewport.apply();
 
         camera.update();
-
     }
 
     public void logic() {
@@ -121,6 +125,10 @@ public class EarthDigger extends ApplicationAdapter {
             personaje.saltar();
         }
 
+        //POSICION RATON
+        mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(mouse_position);
+        System.out.println(mouse_position.x + ", " + mouse_position.y);
 
     }
 
