@@ -153,8 +153,7 @@ public class Personaje {
     }
 
     public void dispose() {
-        // El spriteSheet original no se guarda en un campo,
-        // considera almacenarlo si quieres liberar aquí la textura.
+
     }
     public Sprite getSprite() {
         return sprite;

@@ -59,53 +59,63 @@ public class EarthDigger extends ApplicationAdapter {
 
     @Override
     public void render() {
+        ScreenUtils.clear(Color.WHITE);
         delta = Gdx.graphics.getDeltaTime();
-
-        // Manejo controles (puedes pasarlo al personaje o manejar aquí)
-        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            personaje.moverIzquierda(delta);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            personaje.moverDerecha(delta);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            personaje.saltar();
-        }
-
 
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
-
+        logic();
 
         spriteBatch.begin();
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        for (Bloque bloque : bloques) {
+            spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
+        }
         personaje.dibujar(spriteBatch);
         spriteBatch.end();
 
-        ScreenUtils.clear(Color.WHITE);
         viewport.apply();
 
         camera.update();
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
-        spriteBatch.begin();
 
+    }
+
+    public void logic() {
+        //CAMARA
         camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
         camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
 
         if (camera.position.x < viewport.getWorldWidth() / 2f) {
             camera.position.x = viewport.getWorldWidth() / 2f;
+        } else if (camera.position.x > mapWidth*16 - viewport.getWorldWidth() / 2f) {
+            camera.position.x = mapWidth*16 - viewport.getWorldWidth() / 2f;
         }
 
         if (camera.position.y < viewport.getWorldHeight() / 2f) {
             camera.position.y = viewport.getWorldHeight() / 2f - 16 * (mapa.getForma().length - 1);
         }
 
-        for (Bloque bloque : bloques) {
-            spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
+
+        //INPUTS
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                personaje.moverIzquierda(delta * 2);
+            } else {
+                personaje.moverIzquierda(delta);
+            }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                personaje.moverDerecha(delta * 2);
+            } else {
+                personaje.moverDerecha(delta);
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            personaje.saltar();
         }
 
-        personaje.dibujar(spriteBatch);
 
-        spriteBatch.end();
     }
 
     @Override
