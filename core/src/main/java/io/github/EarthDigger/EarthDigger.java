@@ -14,12 +14,16 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class EarthDigger extends ApplicationAdapter {
-    Array<Bloque> bloques;
+    ArrayList<Bloque> bloques;
     Mapa mapa;
+    int[][] mapa_forma;
     Vector3 mouse_position = new Vector3(0,0,0);
+    Vector3 mouse_snapshot = new Vector3(0,0,0);
+    int[] true_mouse_position = new int[2];
     float delta;
     int screenSizeX = 320;
     int screenSizeY = 48;
@@ -33,8 +37,9 @@ public class EarthDigger extends ApplicationAdapter {
     @Override
     public void create() {
         mapa = new Mapa();
+        mapa_forma = mapa.getForma();
         mapWidth = mapa.getForma()[0].length;
-        bloques = new Array<>();
+        bloques = new ArrayList<>();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
@@ -44,20 +49,7 @@ public class EarthDigger extends ApplicationAdapter {
         Assets.load();
 
         // Generar bloques con clase Bloque y texturas de Assets
-        //int[][] mapa_forma = mapa.getForma();
-        //mapa_forma[1][0] = 0;
-        //mapa.setForma(mapa_forma);
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < mapWidth; j++) {
-                if (mapa.getForma()[i][j] == 1) {
-                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.cespedTexture));
-                } else if (mapa.getForma()[i][j] == 2) {
-                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.tierraTexture));
-                } else if (mapa.getForma()[i][j] == 3) {
-                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.piedraTexture));
-                }
-            }
-        }
+        mapa.rellenarMapa(bloques);
 
         personaje = new Personaje("Frames.png", 16, 16);
     }
@@ -66,6 +58,7 @@ public class EarthDigger extends ApplicationAdapter {
     public void render() {
         ScreenUtils.clear(Color.WHITE);
         delta = Gdx.graphics.getDeltaTime();
+        mapa.rellenarMapa(bloques);
 
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
@@ -128,7 +121,32 @@ public class EarthDigger extends ApplicationAdapter {
         //POSICION RATON
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouse_position);
-        System.out.println(mouse_position.x + ", " + mouse_position.y);
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            mouse_snapshot = mouse_position;
+            true_mouse_position[0] = (int)mouse_snapshot.x/16;
+            if (mouse_snapshot.y > 0) {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16;
+            } else {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+            }
+            System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
+            if (-true_mouse_position[1] != mapa_forma.length - 1) {
+                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
+                mapa.setForma(mapa_forma);
+            }
+        }
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            mouse_snapshot = mouse_position;
+            true_mouse_position[0] = (int)mouse_snapshot.x/16;
+            if (mouse_snapshot.y > 0) {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16;
+            } else {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+            }
+            System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
+            mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 1;
+            mapa.setForma(mapa_forma);
+        }
 
     }
 
