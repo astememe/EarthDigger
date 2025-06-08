@@ -30,7 +30,6 @@ public class EarthDigger extends ApplicationAdapter {
         mapa = new Mapa();
         mapWidth = mapa.getForma()[0].length;
         bloques = new Array<>();
-        personaje = new Personaje("Frames.png", 16, 16);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
@@ -92,6 +91,13 @@ public class EarthDigger extends ApplicationAdapter {
         camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
         camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
 
+        if (camera.position.x < viewport.getWorldWidth() / 2f) {
+            camera.position.x = viewport.getWorldWidth() / 2f;
+        }
+
+        if (camera.position.y < viewport.getWorldHeight() / 2f) {
+            camera.position.y = viewport.getWorldHeight() / 2f - 16 * (mapa.getForma().length - 1);
+        }
 
         for (Bloque bloque : bloques) {
             spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
