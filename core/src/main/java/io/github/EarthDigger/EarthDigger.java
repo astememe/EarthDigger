@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -13,17 +14,21 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class EarthDigger extends ApplicationAdapter {
     Array<Bloque> bloques;
+    Mapa mapa;
     float delta;
     int screenSizeX = 320;
     int screenSizeY = 48;
     Viewport viewport;
     OrthographicCamera camera;
     Personaje personaje;
+    int mapWidth;
 
     SpriteBatch spriteBatch;
 
     @Override
     public void create() {
+        mapa = new Mapa();
+        mapWidth = mapa.getForma()[0].length;
         bloques = new Array<>();
         personaje = new Personaje("Frames.png", 16, 16);
         camera = new OrthographicCamera();
@@ -34,19 +39,7 @@ public class EarthDigger extends ApplicationAdapter {
 
         Assets.load();
 
-        int blockSize = 16;
-        int mapWidth = 200;
-
         // Generar bloques con clase Bloque y texturas de Assets
-        for (int x = 0; x < mapWidth; x++) {
-            bloques.add(new Bloque(x * blockSize, 5 * blockSize, blockSize, blockSize, Assets.cespedTexture));
-
-            for (int y = 1; y < 5; y++) {
-                bloques.add(new Bloque(x * blockSize, y * blockSize, blockSize, blockSize, Assets.tierraTexture));
-            }
-
-            bloques.add(new Bloque(x * blockSize, 0, blockSize, blockSize, Assets.piedraTexture));
-        }
 
         personaje = new Personaje("Frames.png", 16, 16);
     }
@@ -64,6 +57,18 @@ public class EarthDigger extends ApplicationAdapter {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             personaje.saltar();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < mapWidth; j++) {
+                if (mapa.getForma()[i][j] == 1) {
+                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.cespedTexture));
+                } else if (mapa.getForma()[i][j] == 2) {
+                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.tierraTexture));
+                } else if (mapa.getForma()[i][j] == 3) {
+                    bloques.add(new Bloque(j*16, i*-16, 16, 16, Assets.piedraTexture));
+                }
+            }
         }
 
         personaje.reiniciarSaltos(delta, bloques);
