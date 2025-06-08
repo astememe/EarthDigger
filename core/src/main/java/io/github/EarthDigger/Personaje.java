@@ -1,14 +1,14 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
+
+import java.util.ArrayList;
 
 public class Personaje {
     private Rectangle personajeHitbox;
@@ -89,7 +89,7 @@ public class Personaje {
         }
     }
 
-    public void reiniciarSaltos(float delta, Array<Bloque> bloques) {
+    public void reiniciarSaltos(float delta, ArrayList<Bloque> bloques) {
         if (velocidadY < 0) {
             velocidadY += gravedadCaida * delta;
         } else {
