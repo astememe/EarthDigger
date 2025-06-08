@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -38,6 +39,9 @@ public class EarthDigger extends ApplicationAdapter {
         Assets.load();
 
         // Generar bloques con clase Bloque y texturas de Assets
+        //int[][] mapa_forma = mapa.getForma();
+        //mapa_forma[1][0] = 0;
+        //mapa.setForma(mapa_forma);
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < mapWidth; j++) {
                 if (mapa.getForma()[i][j] == 1) {
@@ -50,54 +54,74 @@ public class EarthDigger extends ApplicationAdapter {
             }
         }
 
-        personaje = new Personaje("Frames.png", 14, 16);
+        personaje = new Personaje("Frames.png", 16, 16);
     }
 
     @Override
     public void render() {
+        ScreenUtils.clear(Color.WHITE);
         delta = Gdx.graphics.getDeltaTime();
 
-        // Salir
+        personaje.reiniciarSaltos(delta, bloques);
+        personaje.update(delta);
+        logic();
+
+        spriteBatch.begin();
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        for (Bloque bloque : bloques) {
+            spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
+        }
+        personaje.dibujar(spriteBatch);
+        spriteBatch.end();
+
+        viewport.apply();
+
+        camera.update();
+
+    }
+
+    public void logic() {
+        //CAMARA
+        camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
+        camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
+
+        if (camera.position.x < viewport.getWorldWidth() / 2f) {
+            camera.position.x = viewport.getWorldWidth() / 2f;
+        } else if (camera.position.x > mapWidth*16 - viewport.getWorldWidth() / 2f) {
+            camera.position.x = mapWidth*16 - viewport.getWorldWidth() / 2f;
+        }
+
+        if (camera.position.y < viewport.getWorldHeight() / 2f) {
+            camera.position.y = viewport.getWorldHeight() / 2f - 16 * (mapa.getForma().length - 1);
+        }
+
+
+        //INPUTS
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             Gdx.app.exit();
         }
 
-        // Manejo controles (puedes pasarlo al personaje o manejar aquí)
+
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            personaje.moverIzquierda(delta);
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                personaje.moverIzquierda(delta * 2);
+            } else {
+                personaje.moverIzquierda(delta);
+            }
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            personaje.moverDerecha(delta);
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                personaje.moverDerecha(delta * 2);
+            } else {
+                personaje.moverDerecha(delta);
+            }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             personaje.saltar();
         }
 
-        personaje.reiniciarSaltos(delta, bloques);
-        personaje.update(delta);
 
-        spriteBatch.begin();
-        personaje.dibujar(spriteBatch);
-        spriteBatch.end();
-
-        ScreenUtils.clear(Color.WHITE);
-        viewport.apply();
-
-        camera.update();
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
-        spriteBatch.begin();
-
-        camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
-        camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
-
-
-        for (Bloque bloque : bloques) {
-            spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
-        }
-
-        personaje.dibujar(spriteBatch);
-
-        spriteBatch.end();
     }
 
     @Override

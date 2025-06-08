@@ -64,12 +64,10 @@ public class Personaje {
         frameActual = quietoFrames[0];
         stateTime = 0f;
 
-        personajeHitbox = new Rectangle(posX, posY, ancho, alto);
-
         frameActual = quietoFrames[0];
         stateTime = 0f;
 
-        personajeHitbox = new Rectangle(posX, posY, ancho, alto);
+        personajeHitbox = new Rectangle(posX, posY, ancho-2, alto);
     }
 
     public void moverIzquierda(float delta) {
@@ -100,7 +98,7 @@ public class Personaje {
         }
 
         float nuevaY = posY + velocidadY * delta;
-        Rectangle nuevaHitbox = new Rectangle(posX, nuevaY, ancho, alto);
+        Rectangle nuevaHitbox = new Rectangle(posX+2, nuevaY, ancho-4, alto);
 
         boolean sobreBloque = false;
 
@@ -156,8 +154,7 @@ public class Personaje {
     }
 
     public void dispose() {
-        // El spriteSheet original no se guarda en un campo,
-        // considera almacenarlo si quieres liberar aquí la textura.
+
     }
     public Sprite getSprite() {
         return sprite;
