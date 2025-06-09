@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -21,11 +22,27 @@ public class JuegoScreen implements Screen {
     private Mapa mapa;
     private ArrayList<Bloque> bloques;
     private int[][] mapa_forma;
+    private Vector3 mouse_position = new Vector3(0,0,0);
+    private Vector3 mouse_snapshot = new Vector3(0,0,0);
     private int[] true_mouse_position = new int[2];
     private int screenSizeX = 320;
     private int screenSizeY = 48;
     private float delta;
     private int mapWidth;
+
+    //     ArrayList<Bloque> bloques;
+    //    Mapa mapa;
+    //    int[][] mapa_forma;
+    //    Vector3 mouse_position = new Vector3(0,0,0);
+    //    Vector3 mouse_snapshot = new Vector3(0,0,0);
+    //    int[] true_mouse_position = new int[2];
+    //    float delta;
+    //    int screenSizeX = 320;
+    //    int screenSizeY = 48;
+    //    Viewport viewport;
+    //    OrthographicCamera camera;
+    //    Personaje personaje;
+    //    int mapWidth;
 
     public JuegoScreen(EarthDigger game) {
         this.game = game;
