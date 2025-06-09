@@ -1,6 +1,5 @@
 package io.github.EarthDigger;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Mapa {
