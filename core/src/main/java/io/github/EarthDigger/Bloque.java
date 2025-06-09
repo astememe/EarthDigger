@@ -13,6 +13,8 @@ public class Bloque extends Rectangle {
         setCoordenadas(new float[]{x, y});
     }
 
+
+
     public Texture getTextura() {
         return textura;
     }
