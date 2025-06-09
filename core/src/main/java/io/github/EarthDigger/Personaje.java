@@ -17,6 +17,9 @@ public class Personaje {
     private float gravedadNormal = -100;
     private float gravedadCaida = -300;
     private boolean saltando = false;
+    boolean corriendo = false;
+    private boolean mirandoDerecha = true;
+    private boolean moviendose = false;
     private int cantSaltos = 0;
 
     private Animation<TextureRegion> caminarDerechaAnim;
@@ -27,8 +30,7 @@ public class Personaje {
 
     private float stateTime;
 
-    private boolean mirandoDerecha = true;
-    private boolean moviendose = false;
+
 
     private float posX, posY;
     private float ancho, alto;
@@ -97,22 +99,26 @@ public class Personaje {
         }
 
         float nuevaY = posY + velocidadY * delta;
-        Rectangle nuevaHitbox = new Rectangle(posX+2, nuevaY, ancho-4, alto);
+        Rectangle nuevaHitbox = new Rectangle(posX + 2, nuevaY, ancho - 4, alto);
 
-        boolean sobreBloque = false;
+        boolean colisionVertical = false;
 
         for (Bloque bloque : bloques) {
-            if (nuevaHitbox.overlaps(bloque) && velocidadY <= 0) {
-                posY = bloque.y + bloque.height;
-                velocidadY = 0;
-                cantSaltos = 0;
-                saltando = false;
-                sobreBloque = true;
-                break;
+            if (nuevaHitbox.overlaps(bloque)) {
+                if (velocidadY < 0) {
+                    posY = bloque.y + bloque.height;
+                    velocidadY = 0;
+                    cantSaltos = 0;
+                    saltando = false;
+                } else if (velocidadY > 0) {
+                    posY = bloque.y - alto;
+                    velocidadY = 0;
+                }
+                colisionVertical = true;
             }
         }
 
-        if (!sobreBloque) {
+        if (!colisionVertical) {
             posY = nuevaY;
         }
 
@@ -134,6 +140,8 @@ public class Personaje {
 
         personajeHitbox.setPosition(posX, posY);
         moviendose = false; // reset para el siguiente frame
+
+
     }
 
     public void dibujar(SpriteBatch batch) {

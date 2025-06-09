@@ -94,6 +94,11 @@ public class EarthDigger extends ApplicationAdapter {
 
 
         //INPUTS
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            Gdx.app.exit();
+        }
+
+
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 personaje.moverIzquierda(delta * 2);
@@ -101,6 +106,7 @@ public class EarthDigger extends ApplicationAdapter {
                 personaje.moverIzquierda(delta);
             }
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 personaje.moverDerecha(delta * 2);
