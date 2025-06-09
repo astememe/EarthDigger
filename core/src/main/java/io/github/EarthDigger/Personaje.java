@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
@@ -32,14 +33,14 @@ public class Personaje {
 
 
 
-    private float posX, posY;
-    private float ancho, alto;
+    protected float posX, posY;
+    protected float ancho, alto;
 
     public Personaje(String rutaSpriteSheet, float ancho, float alto) {
         this.ancho = ancho;
         this.alto = alto;
         this.posX = 0;
-        this.posY = 200;
+        this.posY = 100;
 
         Texture spriteSheet = new Texture(Gdx.files.internal(rutaSpriteSheet));
         TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16); // 6x6 pero usamos 3 filas x 2 columnas
@@ -167,7 +168,12 @@ public class Personaje {
         return sprite;
     }
 
+    public Vector2 getPosicion() {
+        return new Vector2(posX, posY);
+    }
+
     public float getAncho() { return ancho; }
     public float getAlto() { return alto; }
+
 
 }

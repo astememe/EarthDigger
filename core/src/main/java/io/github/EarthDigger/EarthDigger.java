@@ -20,6 +20,7 @@ import java.util.Vector;
 public class EarthDigger extends ApplicationAdapter {
     ArrayList<Bloque> bloques;
     Mapa mapa;
+    Enemy enemy;
     int[][] mapa_forma;
     Vector3 mouse_position = new Vector3(0,0,0);
     Vector3 mouse_snapshot = new Vector3(0,0,0);
@@ -48,10 +49,10 @@ public class EarthDigger extends ApplicationAdapter {
 
         Assets.load();
 
-        // Generar bloques con clase Bloque y texturas de Assets
         mapa.rellenarMapa(bloques);
-
+        enemy = new Enemy("easteregg.png", 16, 16);
         personaje = new Personaje("Frames.png", 16, 16);
+
     }
 
     @Override
@@ -59,6 +60,10 @@ public class EarthDigger extends ApplicationAdapter {
         ScreenUtils.clear(Color.WHITE);
         delta = Gdx.graphics.getDeltaTime();
         mapa.rellenarMapa(bloques);
+
+        enemy.seguirAlJugador(personaje.getPosicion(), delta);
+        enemy.update(delta);
+
 
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
@@ -70,6 +75,7 @@ public class EarthDigger extends ApplicationAdapter {
             spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
         }
         personaje.dibujar(spriteBatch);
+        enemy.dibujar(spriteBatch);
         spriteBatch.end();
 
         viewport.apply();
@@ -121,7 +127,7 @@ public class EarthDigger extends ApplicationAdapter {
         //POSICION RATON
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouse_position);
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             mouse_snapshot = mouse_position;
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
@@ -135,7 +141,7 @@ public class EarthDigger extends ApplicationAdapter {
                 mapa.setForma(mapa_forma);
             }
         }
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             mouse_snapshot = mouse_position;
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
