@@ -107,6 +107,37 @@ public class JuegoScreen implements Screen {
             personaje.moverDerecha(delta);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) personaje.saltar();
+
+        mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(mouse_position);
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            mouse_snapshot = mouse_position;
+            true_mouse_position[0] = (int)mouse_snapshot.x/16;
+            if (mouse_snapshot.y > 0) {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16;
+            } else {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+            }
+            System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
+            if (-true_mouse_position[1] != mapa_forma.length - 1) {
+                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
+                mapa.setForma(mapa_forma);
+            }
+        }
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            mouse_snapshot = mouse_position;
+            true_mouse_position[0] = (int)mouse_snapshot.x/16;
+            if (mouse_snapshot.y > 0) {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16;
+            } else {
+                true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+            }
+            System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
+            if (-true_mouse_position[1] != mapa_forma.length - 1) {
+                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 1;
+                mapa.setForma(mapa_forma);
+            }
+        }
     }
 
     @Override public void resize(int width, int height) { viewport.update(width, height); }
