@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -16,9 +15,9 @@ import java.util.ArrayList;
 
 public class JuegoScreen implements Screen {
     //Fondo
-    private boolean esDia = true;
+    private boolean esDia = false;
     private float tiempoTranscurrido = 0f;
-    private final float intervaloCambio = 30f;
+    private final float intervaloCambio = 60f; // cambiar cada 10 segundos, por ejemplo
     private Texture fondoDia;
     private Texture fondoNoche;
     private Texture fondoActual;
@@ -40,6 +39,10 @@ public class JuegoScreen implements Screen {
     private int screenSizeY = 48;
     private float delta;
     private int mapWidth;
+    private float tiempoDesdeUltimoSpawn = 0f;
+    private float intervaloSpawn = 10f; // Tiempo de aparición de los enemigos.
+    private ArrayList<Enemy> enemigos = new ArrayList<>();
+    private float velocidadEnemigos = 20f; // Velocidad de los enemigos.
 
     public JuegoScreen(EarthDigger game) {
         this.game = game;
@@ -66,6 +69,16 @@ public class JuegoScreen implements Screen {
         mapa.rellenarMapa(bloques);
 
         personaje = new Personaje("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
+
+        int columnaInicial = 1;
+        for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
+            if (mapa_forma[fila][columnaInicial] != 0) {
+                float x = columnaInicial * 16;
+                float y = -fila * 16 + 16;
+                personaje.setPosicion(x, y);
+                break;
+            }
+        }
     }
 
     @Override
@@ -77,6 +90,18 @@ public class JuegoScreen implements Screen {
 
         camera.update();
 
+        // ACTUALIZAR ENEMIGOS Y COLISIONES
+        for (Enemy enemigo : enemigos) {
+            enemigo.reiniciarSaltos(delta, bloques);
+            enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
+            enemigo.update(delta); // MODIFICADO: actualizar animación y frameActual
+            if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
+                personaje.recibirGolpe();
+            }
+        }
+
+        stage.act(delta);
+        stage.draw();
 
         //CAMBIO DE FONDO
         if (esDia) {
@@ -89,13 +114,22 @@ public class JuegoScreen implements Screen {
         spriteBatch.draw(fondoActual, 0, -mapa_forma.length*16, 180*16, 20*16);
         spriteBatch.end();
 
+
         //CARGAR SPRITES
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
         for (Bloque bloque : bloques) {
             spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
         }
+
+        // DIBUJAR ENEMIGOS - MODIFICADO: ahora sí se dibujan
+        for (Enemy enemigo : enemigos) {
+            enemigo.dibujar(spriteBatch);
+        }
+
+        // DIBUJAR PERSONAJE (que estaba después de los enemigos)
         personaje.dibujar(spriteBatch);
+
         spriteBatch.end();
 
         stage.act(delta);
@@ -133,6 +167,17 @@ public class JuegoScreen implements Screen {
             camera.position.y = viewport.getWorldHeight() / 2f - 16 * (mapa.getForma().length - 1);
         }
 
+        if (!esDia) {
+            tiempoDesdeUltimoSpawn += delta;
+            if (tiempoDesdeUltimoSpawn >= intervaloSpawn) {
+                spawnEnemy();
+                tiempoDesdeUltimoSpawn = 0f;
+            }
+        } else {
+            for (int i = 0; i < enemigos.size(); i++) {
+                enemigos.remove(i); //Para que desaparezcan los enemigos cuando sea de dia.
+            }
+        }
 
         //CONTROLES
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -140,13 +185,13 @@ public class JuegoScreen implements Screen {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverIzquierda((float) (delta*1.5));
+                personaje.moverIzquierda((float) (delta*1.2));
             }
             personaje.moverIzquierda(delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)){
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverDerecha((float) (delta*1.5));
+                personaje.moverDerecha(delta*2);
             }
             personaje.moverDerecha(delta);
         }
@@ -159,6 +204,7 @@ public class JuegoScreen implements Screen {
         //POSICION RATON, ROMPER BLOQUES, PONER BLOQUES
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouse_position);
+
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             mouse_snapshot = mouse_position;
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
@@ -188,6 +234,24 @@ public class JuegoScreen implements Screen {
             }
         }
     }
+
+    private void spawnEnemy() {
+        if (enemigos.size() >= 5) return;
+
+        Enemy nuevoEnemigo = new Enemy("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
+        int columna = (int)(Math.random() * mapa_forma[0].length);
+
+        for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
+            if (mapa_forma[fila][columna] != 0) {
+                float x = columna * 16;
+                float y = -fila * 16 + 16;
+                nuevoEnemigo.setPosicion(x, y);
+                enemigos.add(nuevoEnemigo);
+                break;
+            }
+        }
+    }
+
 
     @Override public void resize(int width, int height) { viewport.update(width, height); }
     @Override public void pause() {}

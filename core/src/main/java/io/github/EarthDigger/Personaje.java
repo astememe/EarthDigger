@@ -7,34 +7,38 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
 public class Personaje {
-    private Rectangle personajeHitbox;
-    private Sprite sprite;
-    private float velocidadY = 0;
-    private float gravedadNormal = -100;
-    private float gravedadCaida = -300;
-    private boolean saltando = false;
-    boolean corriendo = false;
-    private boolean mirandoDerecha = true;
-    private boolean moviendose = false;
-    private int cantSaltos = 0;
+    protected Rectangle personajeHitbox;
+    protected Sprite sprite;
+
+    protected int cantSaltos = 0;
+    protected int vida = 5;
     private int bloqueEquipado = 1;
 
-    private Animation<TextureRegion> caminarDerechaAnim;
-    private Animation<TextureRegion> caminarIzquierdaAnim;
-    private Animation<TextureRegion> quietoAnim;
 
-    private TextureRegion frameActual;
+    protected float velocidadY = 0;
+    protected float gravedadNormal = -100;
+    protected float gravedadCaida = -300;
+    protected float stateTime;
+    protected float posX, posY;
+    protected float ancho, alto;
 
-    private float stateTime;
+    protected boolean saltando = false;
+    protected boolean corriendo = false;
+    protected boolean mirandoDerecha = true;
+    protected boolean moviendose = false;
+    protected boolean muerto = false;
 
-
-
-    private float posX, posY;
-    private float ancho, alto;
+    private float tiempoDesdeUltimoGolpe = 0f;
+    private final float COOLDOWN_GOLPE = 1.5f;
+    protected Animation<TextureRegion> caminarDerechaAnim;
+    protected Animation<TextureRegion> caminarIzquierdaAnim;
+    protected Animation<TextureRegion> quietoAnim;
+    protected TextureRegion frameActual;
 
     public Personaje(String rutaSpriteSheet, float ancho, float alto) {
         this.ancho = ancho;
@@ -61,7 +65,10 @@ public class Personaje {
         TextureRegion[] quietoFrames = new TextureRegion[2];
         quietoFrames[0] = tmp[2][0];
         quietoFrames[1] = tmp[2][1];
-        quietoAnim = new Animation<>(1f, quietoFrames); // más lenta si quieres que parpadee o respire
+        quietoAnim = new Animation<>(1f, quietoFrames);
+
+        frameActual = quietoFrames[0];
+        stateTime = 0f;
 
         frameActual = quietoFrames[0];
         stateTime = 0f;
@@ -165,6 +172,10 @@ public class Personaje {
         return sprite;
     }
 
+    public Vector2 getPosicion() {
+        return new Vector2(posX, posY);
+    }
+
     public float getAncho() { return ancho; }
     public float getAlto() { return alto; }
 
@@ -174,5 +185,22 @@ public class Personaje {
 
     public void setBloqueEquipado(int bloqueEquipado) {
         this.bloqueEquipado = bloqueEquipado;
+    }
+    public void setPosicion(float x, float y) {
+        this.posX = x;
+        this.posY = y;
+        personajeHitbox.setPosition(x, y);
+    }
+
+    public void recibirGolpe() {
+        if (!muerto && tiempoDesdeUltimoGolpe >= COOLDOWN_GOLPE) {
+            vida--;
+            System.out.println("El personaje recibio un golpe!\nVida restante: " + vida);
+            tiempoDesdeUltimoGolpe = 0f;
+            if (vida <= 0) {
+                muerto = true;
+                System.out.println("Has muerto...");
+            }
+        }
     }
 }
