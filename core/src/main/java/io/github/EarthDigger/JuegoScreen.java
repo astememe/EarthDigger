@@ -40,7 +40,7 @@ public class JuegoScreen implements Screen {
     private float delta;
     private int mapWidth;
     private float tiempoDesdeUltimoSpawn = 0f;
-    private float intervaloSpawn = 10f; // Tiempo de aparición de los enemigos.
+    private float intervaloSpawn = 5; // Tiempo de aparición de los enemigos.
     private ArrayList<Enemy> enemigos = new ArrayList<>();
     private float velocidadEnemigos = 20f; // Velocidad de los enemigos.
 
@@ -195,7 +195,7 @@ public class JuegoScreen implements Screen {
             }
             personaje.moverDerecha(delta);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) personaje.saltar();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) personaje.saltar();
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipado(1);
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipado(2);
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipado(3);
