@@ -21,12 +21,12 @@ public class Enemy2 extends Personaje {
         stateTime += delta;
         if (moviendose) {
             if (mirandoDerecha) {
-                frameActual = caminarDerechaAnim.getKeyFrame(stateTime, true);
+                setFrameActual(getCaminarDerechaAnim().getKeyFrame(stateTime, true));
             } else {
-                frameActual = caminarIzquierdaAnim.getKeyFrame(stateTime, true);
+                setFrameActual(getCaminarIzquierdaAnim().getKeyFrame(stateTime, true));
             }
         } else {
-            frameActual = quietoAnim.getKeyFrame(stateTime, true);
+            setFrameActual(getQuietoAnim().getKeyFrame(stateTime, true));
         }
         getHitbox().setPosition(getX(), getY());
         moviendose = false;
@@ -34,6 +34,6 @@ public class Enemy2 extends Personaje {
 
     @Override
     public void dibujar(SpriteBatch batch) {
-        batch.draw(frameActual, getX(), getY(), getAncho(), getAlto());
+        batch.draw(getFrameActual(), getX(), getY(), getAncho(), getAlto());
     }
 }
