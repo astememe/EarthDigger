@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -21,6 +22,7 @@ public class JuegoScreen implements Screen {
     private Texture fondoDia;
     private Texture fondoNoche;
     private Texture fondoActual;
+
 
     private EarthDigger game;
     private Stage stage;
@@ -49,8 +51,8 @@ public class JuegoScreen implements Screen {
 
     @Override
     public void show() {
-        fondoDia = new Texture("FONDOS\\fondodiaprueba.png");
-        fondoNoche = new Texture("FONDOS\\fondonocheprueba.jpg");
+        fondoDia = new Texture("FONDOS\\dia.png");
+        fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screenSizeX, screenSizeY);
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
@@ -67,7 +69,7 @@ public class JuegoScreen implements Screen {
         Assets.load();
         mapa.rellenarMapa(bloques);
 
-        personaje = new Personaje("Frames.png", 16, 16);
+        personaje = new Personaje("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
 
         int columnaInicial = 1;
         for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
@@ -113,6 +115,7 @@ public class JuegoScreen implements Screen {
         spriteBatch.draw(fondoActual, 0, -mapa_forma.length*16, 180*16, 20*16);
         spriteBatch.end();
 
+
         //CARGAR SPRITES
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
@@ -129,16 +132,22 @@ public class JuegoScreen implements Screen {
         personaje.dibujar(spriteBatch);
 
         spriteBatch.end();
+
+        stage.act(delta);
+        stage.draw();
     }
+
 
     public void logic() {
         mapa.rellenarMapa(bloques);
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
 
+
         //LA CAMARA SIGUE AL PERSONAJE UWU
         camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
         camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
+
 
         //CAMBIO DE FONDO
         tiempoTranscurrido += delta;
@@ -146,6 +155,7 @@ public class JuegoScreen implements Screen {
             esDia = !esDia; // cambia entre día y noche
             tiempoTranscurrido = 0f;
         }
+
 
         //BLOQUEAR LA CAMARA AL LLEGAR AL BORDE DE LA PANTALLA
         if (camera.position.x < viewport.getWorldWidth() / 2f) {
@@ -168,20 +178,23 @@ public class JuegoScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverIzquierda((float) (delta*1.5));
+                personaje.moverIzquierda((float) (delta*1.2));
             }
             personaje.moverIzquierda(delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)){
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverDerecha((float) (delta*1.5));
+                personaje.moverDerecha(delta*2);
             }
             personaje.moverDerecha(delta);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) personaje.saltar();
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipado(1);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipado(2);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipado(3);
+
 
         //POSICION RATON, ROMPER BLOQUES, PONER BLOQUES
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -201,7 +214,6 @@ public class JuegoScreen implements Screen {
                 mapa.setForma(mapa_forma);
             }
         }
-
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             mouse_snapshot = mouse_position;
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
@@ -212,7 +224,7 @@ public class JuegoScreen implements Screen {
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1) {
-                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 1;
+                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = personaje.getBloqueEquipado();
                 mapa.setForma(mapa_forma);
             }
         }
@@ -244,8 +256,5 @@ public class JuegoScreen implements Screen {
         personaje.dispose();
         spriteBatch.dispose();
         Assets.dispose();
-        fondoDia.dispose();
-        fondoNoche.dispose();
-        // Si Enemy tiene recursos, haz dispose también aquí (no lo muestras)
     }
 }

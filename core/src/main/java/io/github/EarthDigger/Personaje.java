@@ -14,8 +14,11 @@ import java.util.ArrayList;
 public class Personaje {
     protected Rectangle personajeHitbox;
     protected Sprite sprite;
+
     protected int cantSaltos = 0;
     protected int vida = 5;
+    private int bloqueEquipado = 1;
+
 
     protected float velocidadY = 0;
     protected float gravedadNormal = -100;
@@ -32,39 +35,37 @@ public class Personaje {
 
     private float tiempoDesdeUltimoGolpe = 0f;
     private final float COOLDOWN_GOLPE = 2f;
-
     protected Animation<TextureRegion> caminarDerechaAnim;
     protected Animation<TextureRegion> caminarIzquierdaAnim;
     protected Animation<TextureRegion> quietoAnim;
-
     protected TextureRegion frameActual;
 
     public Personaje(String rutaSpriteSheet, float ancho, float alto) {
         this.ancho = ancho;
         this.alto = alto;
         this.posX = 0;
-        this.posY = 50;
+        this.posY = 0;
 
         Texture spriteSheet = new Texture(Gdx.files.internal(rutaSpriteSheet));
         TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16); // 6x6 pero usamos 3 filas x 2 columnas
 
-        // Animación caminar derecha
+        // Animación caminar derecha (fila 0)
         TextureRegion[] caminarDerechaFrames = new TextureRegion[2];
         caminarDerechaFrames[0] = tmp[0][0];
         caminarDerechaFrames[1] = tmp[0][1];
         caminarDerechaAnim = new Animation<>(0.35f, caminarDerechaFrames);
 
-        // Animación caminar izquierda
+        // Animación caminar izquierda (fila 1)
         TextureRegion[] caminarIzquierdaFrames = new TextureRegion[2];
         caminarIzquierdaFrames[0] = tmp[1][0];
         caminarIzquierdaFrames[1] = tmp[1][1];
         caminarIzquierdaAnim = new Animation<>(0.35f, caminarIzquierdaFrames);
 
-        // Animación quieto
+        // Animación quieto (fila 2)
         TextureRegion[] quietoFrames = new TextureRegion[2];
         quietoFrames[0] = tmp[2][0];
         quietoFrames[1] = tmp[2][1];
-        quietoAnim = new Animation<>(1f, quietoFrames);
+        quietoAnim = new Animation<>(1f, quietoFrames); // más lenta si quieres que parpadee o respire
 
         frameActual = quietoFrames[0];
         stateTime = 0f;
@@ -131,7 +132,6 @@ public class Personaje {
 
     public void update(float delta) {
         stateTime += delta;
-        tiempoDesdeUltimoGolpe += delta;
 
         if (moviendose) {
             if (mirandoDerecha) {
@@ -144,7 +144,7 @@ public class Personaje {
         }
 
         personajeHitbox.setPosition(posX, posY);
-        moviendose = false;
+        moviendose = false; // reset para el siguiente frame
 
 
     }
@@ -179,6 +179,13 @@ public class Personaje {
     public float getAncho() { return ancho; }
     public float getAlto() { return alto; }
 
+    public int getBloqueEquipado() {
+        return bloqueEquipado;
+    }
+
+    public void setBloqueEquipado(int bloqueEquipado) {
+        this.bloqueEquipado = bloqueEquipado;
+    }
     public void setPosicion(float x, float y) {
         this.posX = x;
         this.posY = y;
@@ -196,5 +203,4 @@ public class Personaje {
             }
         }
     }
-
 }
