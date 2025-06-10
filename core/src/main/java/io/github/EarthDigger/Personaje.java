@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 
 public class Personaje {
+    float delta = Gdx.graphics.getDeltaTime();
     protected Rectangle personajeHitbox;
     protected Sprite sprite;
 
@@ -146,6 +147,8 @@ public class Personaje {
         personajeHitbox.setPosition(posX, posY);
         moviendose = false; // reset para el siguiente frame
 
+        //TIEMPO PARA COLISIONES
+        tiempoDesdeUltimoGolpe+= (float) (0.5*delta);
 
     }
 

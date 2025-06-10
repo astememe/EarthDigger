@@ -90,16 +90,6 @@ public class JuegoScreen implements Screen {
 
         camera.update();
 
-        // ACTUALIZAR ENEMIGOS Y COLISIONES
-        for (Enemy enemigo : enemigos) {
-            enemigo.reiniciarSaltos(delta, bloques);
-            enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
-            enemigo.update(delta); // MODIFICADO: actualizar animación y frameActual
-            if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
-                personaje.recibirGolpe();
-            }
-        }
-
         stage.act(delta);
         stage.draw();
 
@@ -125,6 +115,15 @@ public class JuegoScreen implements Screen {
         // DIBUJAR ENEMIGOS - MODIFICADO: ahora sí se dibujan
         for (Enemy enemigo : enemigos) {
             enemigo.dibujar(spriteBatch);
+        }
+        // ACTUALIZAR ENEMIGOS Y COLISIONES
+        for (Enemy enemigo : enemigos) {
+            enemigo.reiniciarSaltos(delta, bloques);
+            enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
+            enemigo.update(delta); // MODIFICADO: actualizar animación y frameActual
+            if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
+                personaje.recibirGolpe();
+            }
         }
 
         // DIBUJAR PERSONAJE (que estaba después de los enemigos)
