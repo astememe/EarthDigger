@@ -40,7 +40,7 @@ public class Personaje {
     private boolean muerto = false;
 
     private Random random = new Random();
-    private boolean cavado = false;
+    private boolean cavado;
 
     private Animation<TextureRegion> caminarDerechaAnim;
     private Animation<TextureRegion> caminarIzquierdaAnim;

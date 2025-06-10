@@ -47,7 +47,7 @@ public class JuegoScreen implements Screen {
     private float tiempoDesdeUltimoSpawn = 0f;
     private float intervaloSpawn = 5; // Tiempo de aparición de los enemigos.
     private ArrayList<Enemy> enemigos = new ArrayList<>();
-    private float velocidadEnemigos = 20f; // Velocidad de los enemigos.
+    private float velocidadEnemigos = 5f; // Velocidad de los enemigos.
 
     public JuegoScreen(EarthDigger game) {
         this.game = game;
@@ -236,16 +236,16 @@ public class JuegoScreen implements Screen {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
-            if (-true_mouse_position[1] != mapa_forma.length - 1 ) {
+            if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] != 0) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
 
                 //CONSEGUIR MONEDA 10%
                 personaje.setCavado(true);
                 personaje.conseguirMoneda();
-                personaje.setCavado(false);
             }
         }
+        personaje.setCavado(false);
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             mouse_snapshot = mouse_position;
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
