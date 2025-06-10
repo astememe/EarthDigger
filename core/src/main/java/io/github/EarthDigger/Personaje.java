@@ -39,7 +39,7 @@ public class Personaje {
         this.ancho = ancho;
         this.alto = alto;
         this.posX = 0;
-        this.posY = 200;
+        this.posY = 0;
 
         Texture spriteSheet = new Texture(Gdx.files.internal(rutaSpriteSheet));
         TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16); // 6x6 pero usamos 3 filas x 2 columnas
