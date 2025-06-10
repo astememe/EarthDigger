@@ -233,7 +233,7 @@ public class JuegoScreen implements Screen {
     private void spawnEnemy() {
         if (enemigos.size() >= 5) return;
 
-        Enemy nuevoEnemigo = new Enemy("Frames.png", 16, 16);
+        Enemy nuevoEnemigo = new Enemy("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
         int columna = (int)(Math.random() * mapa_forma[0].length);
 
         for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
