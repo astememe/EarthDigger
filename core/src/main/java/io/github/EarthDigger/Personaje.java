@@ -34,7 +34,7 @@ public class Personaje {
     protected boolean muerto = false;
 
     private float tiempoDesdeUltimoGolpe = 0f;
-    private final float COOLDOWN_GOLPE = 2f;
+    private final float COOLDOWN_GOLPE = 1.5f;
     protected Animation<TextureRegion> caminarDerechaAnim;
     protected Animation<TextureRegion> caminarIzquierdaAnim;
     protected Animation<TextureRegion> quietoAnim;
@@ -65,7 +65,7 @@ public class Personaje {
         TextureRegion[] quietoFrames = new TextureRegion[2];
         quietoFrames[0] = tmp[2][0];
         quietoFrames[1] = tmp[2][1];
-        quietoAnim = new Animation<>(1f, quietoFrames); // más lenta si quieres que parpadee o respire
+        quietoAnim = new Animation<>(1f, quietoFrames);
 
         frameActual = quietoFrames[0];
         stateTime = 0f;

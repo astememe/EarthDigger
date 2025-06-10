@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -16,9 +15,9 @@ import java.util.ArrayList;
 
 public class JuegoScreen implements Screen {
     //Fondo
-    private boolean esDia = true;
+    private boolean esDia = false;
     private float tiempoTranscurrido = 0f;
-    private final float intervaloCambio = 10f; // cambiar cada 10 segundos, por ejemplo
+    private final float intervaloCambio = 60f; // cambiar cada 10 segundos, por ejemplo
     private Texture fondoDia;
     private Texture fondoNoche;
     private Texture fondoActual;
@@ -168,10 +167,16 @@ public class JuegoScreen implements Screen {
             camera.position.y = viewport.getWorldHeight() / 2f - 16 * (mapa.getForma().length - 1);
         }
 
-        tiempoDesdeUltimoSpawn += delta;
-        if (tiempoDesdeUltimoSpawn >= intervaloSpawn) {
-            spawnEnemy();
-            tiempoDesdeUltimoSpawn = 0f;
+        if (!esDia) {
+            tiempoDesdeUltimoSpawn += delta;
+            if (tiempoDesdeUltimoSpawn >= intervaloSpawn) {
+                spawnEnemy();
+                tiempoDesdeUltimoSpawn = 0f;
+            }
+        } else {
+            for (int i = 0; i < enemigos.size(); i++) {
+                enemigos.remove(i); //Para que desaparezcan los enemigos cuando sea de dia.
+            }
         }
 
         //CONTROLES
@@ -242,7 +247,7 @@ public class JuegoScreen implements Screen {
                 float y = -fila * 16 + 16;
                 nuevoEnemigo.setPosicion(x, y);
                 enemigos.add(nuevoEnemigo);
-                break; // para que no agregue varias veces el mismo enemigo
+                break;
             }
         }
     }
