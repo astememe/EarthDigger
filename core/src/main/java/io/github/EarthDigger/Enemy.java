@@ -11,8 +11,6 @@ public class Enemy extends Personaje {
         super(rutaSpriteSheet, ancho, alto);
     }
 
-
-
     public void seguirAlPersonaje(Personaje personaje, float delta, float velocidad) {
         float objetivoX = personaje.getX();
         float diferencia = objetivoX - this.posX;
