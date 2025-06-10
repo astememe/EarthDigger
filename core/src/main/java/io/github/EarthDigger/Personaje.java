@@ -12,33 +12,32 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 
 public class Personaje {
-    protected Rectangle personajeHitbox;
-    protected Sprite sprite;
+    private Rectangle personajeHitbox;
+    private Sprite sprite;
 
-    protected int cantSaltos = 0;
-    protected int vida = 5;
+    private int cantSaltos = 0;
+    private int vida = 5;
     private int bloqueEquipado = 1;
 
-
-    protected float velocidadY = 0;
-    protected float gravedadNormal = -100;
-    protected float gravedadCaida = -300;
-    protected float stateTime;
-    protected float posX, posY;
-    protected float ancho, alto;
-
-    protected boolean saltando = false;
-    protected boolean corriendo = false;
-    protected boolean mirandoDerecha = true;
-    protected boolean moviendose = false;
-    protected boolean muerto = false;
-
+    private float velocidadY = 0;
+    private float gravedadNormal = -100;
+    private float gravedadCaida = -300;
+    private float stateTime;
+    private float posX, posY;
+    private float ancho, alto;
     private float tiempoDesdeUltimoGolpe = 0f;
     private final float COOLDOWN_GOLPE = 1.5f;
-    protected Animation<TextureRegion> caminarDerechaAnim;
-    protected Animation<TextureRegion> caminarIzquierdaAnim;
-    protected Animation<TextureRegion> quietoAnim;
-    protected TextureRegion frameActual;
+
+    private boolean saltando = false;
+    private boolean corriendo = false;
+    private boolean mirandoDerecha = true;
+    private boolean moviendose = false;
+    private boolean muerto = false;
+
+    private Animation<TextureRegion> caminarDerechaAnim;
+    private Animation<TextureRegion> caminarIzquierdaAnim;
+    private Animation<TextureRegion> quietoAnim;
+    private TextureRegion frameActual;
 
     public Personaje(String rutaSpriteSheet, float ancho, float alto) {
         this.ancho = ancho;
@@ -144,7 +143,7 @@ public class Personaje {
         }
 
         personajeHitbox.setPosition(posX, posY);
-        moviendose = false; // reset para el siguiente frame
+        moviendose = false;
 
 
     }
@@ -157,13 +156,51 @@ public class Personaje {
         return personajeHitbox;
     }
 
+    public TextureRegion getFrameActual() {
+        return frameActual;
+    }
+
+    public void setFrameActual(TextureRegion frameActual) {
+        this.frameActual = frameActual;
+    }
+
     public float getX() {
         return posX;
+    }
+
+    public void setPosX(float posX) {
+        this.posX = posX;
     }
 
     public float getY() {
         return posY;
     }
+
+
+    public Animation<TextureRegion> getCaminarDerechaAnim() {
+        return caminarDerechaAnim;
+    }
+
+    public void setCaminarDerechaAnim(Animation<TextureRegion> caminarDerechaAnim) {
+        this.caminarDerechaAnim = caminarDerechaAnim;
+    }
+
+    public Animation<TextureRegion> getCaminarIzquierdaAnim() {
+        return caminarIzquierdaAnim;
+    }
+
+    public void setCaminarIzquierdaAnim(Animation<TextureRegion> caminarIzquierdaAnim) {
+        this.caminarIzquierdaAnim = caminarIzquierdaAnim;
+    }
+
+    public Animation<TextureRegion> getQuietoAnim() {
+        return quietoAnim;
+    }
+
+    public void setQuietoAnim(Animation<TextureRegion> quietoAnim) {
+        this.quietoAnim = quietoAnim;
+    }
+
 
     public void dispose() {
 

@@ -94,7 +94,9 @@ public class JuegoScreen implements Screen {
         for (Enemy enemigo : enemigos) {
             enemigo.reiniciarSaltos(delta, bloques);
             enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
-            enemigo.update(delta); // MODIFICADO: actualizar animación y frameActual
+            enemigo.update(delta);
+
+            // Verificar colisión dentro del bucle
             if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
                 personaje.recibirGolpe();
             }
@@ -174,24 +176,22 @@ public class JuegoScreen implements Screen {
                 tiempoDesdeUltimoSpawn = 0f;
             }
         } else {
-            for (int i = 0; i < enemigos.size(); i++) {
-                enemigos.remove(i); //Para que desaparezcan los enemigos cuando sea de dia.
-            }
+            enemigos.clear(); //Para que desaparezcan los enemigos cuando sea de dia.
         }
 
         //CONTROLES
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverIzquierda((float) (delta*1.2));
+                personaje.moverIzquierda((float) (delta*1.5));
             }
             personaje.moverIzquierda(delta);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)){
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverDerecha(delta*2);
+                personaje.moverDerecha((float) (delta*1.5));
             }
             personaje.moverDerecha(delta);
         }
@@ -239,16 +239,35 @@ public class JuegoScreen implements Screen {
         if (enemigos.size() >= 5) return;
 
         Enemy nuevoEnemigo = new Enemy("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
-        int columna = (int)(Math.random() * mapa_forma[0].length);
+        float spawnX;
+        float spawnY = 0;
 
+        boolean spawnLeft = Math.random() < 0.5;
+
+        int columna;
+        if (spawnLeft) {
+            columna = (int) ((camera.position.x - viewport.getWorldWidth() / 2f - 32) / 16);
+            if (columna < 0) columna = 0;
+        } else {
+            columna = (int) ((camera.position.x + viewport.getWorldWidth() / 2f + 32) / 16);
+            if (columna >= mapa_forma[0].length) columna = mapa_forma[0].length - 1;
+        }
+
+        boolean foundSpawnSpot = false;
         for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
             if (mapa_forma[fila][columna] != 0) {
-                float x = columna * 16;
-                float y = -fila * 16 + 16;
-                nuevoEnemigo.setPosicion(x, y);
+                spawnX = columna * 16;
+                spawnY = -fila * 16 + 16;
+                nuevoEnemigo.setPosicion(spawnX, spawnY);
                 enemigos.add(nuevoEnemigo);
+                foundSpawnSpot = true;
+                System.out.println("Enemigo generado en: X=" + spawnX + ", Y=" + spawnY);
                 break;
             }
+        }
+
+        if (!foundSpawnSpot) {
+            System.out.println("No se encontró un punto de spawn válido para el enemigo en la columna: " + columna);
         }
     }
 
