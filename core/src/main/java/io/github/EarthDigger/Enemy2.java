@@ -2,33 +2,17 @@ package io.github.EarthDigger;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class Enemy extends Personaje {
+public class Enemy2 extends Personaje {
     private boolean mirandoDerecha = true;
     private boolean moviendose = false;
     private float stateTime = 0f;
 
-    public Enemy(String rutaSpriteSheet, float ancho, float alto) {
+    public Enemy2(String rutaSpriteSheet, float ancho, float alto) {
         super(rutaSpriteSheet, ancho, alto);
     }
 
+    public void moverse(){
 
-
-    public void seguirAlPersonaje(Personaje personaje, float delta, float velocidad) {
-        float objetivoX = personaje.getX();
-        float diferencia = objetivoX - this.posX;
-
-        if (Math.abs(diferencia) > 1) {
-            if (diferencia > 0) {
-                this.posX += velocidad * delta;
-                mirandoDerecha = true;
-            } else {
-                this.posX -= velocidad * delta;
-                mirandoDerecha = false;
-            }
-            moviendose = true;
-        } else {
-            moviendose = false;
-        }
     }
 
     @Override

@@ -29,20 +29,10 @@ public class JuegoScreen implements Screen {
     private int screenSizeY = 48;
     private float delta;
     private int mapWidth;
-
-    //     ArrayList<Bloque> bloques;
-    //    Mapa mapa;
-    //    int[][] mapa_forma;
-    //    Vector3 mouse_position = new Vector3(0,0,0);
-    //    Vector3 mouse_snapshot = new Vector3(0,0,0);
-    //    int[] true_mouse_position = new int[2];
-    //    float delta;
-    //    int screenSizeX = 320;
-    //    int screenSizeY = 48;
-    //    Viewport viewport;
-    //    OrthographicCamera camera;
-    //    Personaje personaje;
-    //    int mapWidth;
+    private float tiempoDesdeUltimoSpawn = 0f;
+    private float intervaloSpawn = 10f; // Tiempo de aparición de los enemigos.
+    private ArrayList<Enemy> enemigos = new ArrayList<>();
+    private float velocidadEnemigos = 20f; // Belocidad de los enemigos.
 
     public JuegoScreen(EarthDigger game) {
         this.game = game;
@@ -67,6 +57,16 @@ public class JuegoScreen implements Screen {
         mapa.rellenarMapa(bloques);
 
         personaje = new Personaje("Frames.png", 16, 16);
+        for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
+            for (int columna = 0; columna < mapa_forma[0].length; columna++) {
+                if (mapa_forma[fila][columna] != 0) {
+                    float x = columna * 16;
+                    float y = -(fila + 1) * 16;
+                    personaje.setPosicion(x, y);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -75,15 +75,30 @@ public class JuegoScreen implements Screen {
         ScreenUtils.clear(Color.WHITE);
         logic();
 
+        for (Enemy enemigo : enemigos) {
+            enemigo.reiniciarSaltos(delta, bloques);
+            enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
+            if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
+                personaje.recibirGolpe();
+            }
+        }
+
         stage.act(delta);
         stage.draw();
 
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
+
         for (Bloque bloque : bloques) {
             spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
         }
+
         personaje.dibujar(spriteBatch);
+
+        for (Enemy enemigo : enemigos) {
+            enemigo.dibujar(spriteBatch);
+        }
+
         spriteBatch.end();
 
         camera.update();
@@ -107,52 +122,76 @@ public class JuegoScreen implements Screen {
             camera.position.y = viewport.getWorldHeight() / 2f - 16 * (mapa.getForma().length - 1);
         }
 
+        tiempoDesdeUltimoSpawn += delta;
+        if (tiempoDesdeUltimoSpawn >= intervaloSpawn) {
+            spawnEnemy();
+            tiempoDesdeUltimoSpawn = 0f;
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverIzquierda(delta*2);
+                personaje.moverIzquierda(delta * 2);
+            } else {
+                personaje.moverIzquierda(delta);
             }
-            personaje.moverIzquierda(delta);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)){
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverDerecha(delta*2);
+                personaje.moverDerecha(delta * 2);
+            } else {
+                personaje.moverDerecha(delta);
             }
-            personaje.moverDerecha(delta);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) personaje.saltar();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            personaje.saltar();
+        }
 
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouse_position);
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             mouse_snapshot = mouse_position;
-            true_mouse_position[0] = (int)mouse_snapshot.x/16;
-            if (mouse_snapshot.y > 0) {
-                true_mouse_position[1] = (int)mouse_snapshot.y/16;
-            } else {
-                true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
-            }
+            true_mouse_position[0] = (int)mouse_snapshot.x / 16;
+            true_mouse_position[1] = (mouse_snapshot.y > 0)
+                ? (int)mouse_snapshot.y / 16
+                : (int)mouse_snapshot.y / 16 - 1;
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
             }
         }
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             mouse_snapshot = mouse_position;
-            true_mouse_position[0] = (int)mouse_snapshot.x/16;
-            if (mouse_snapshot.y > 0) {
-                true_mouse_position[1] = (int)mouse_snapshot.y/16;
-            } else {
-                true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
-            }
+            true_mouse_position[0] = (int)mouse_snapshot.x / 16;
+            true_mouse_position[1] = (mouse_snapshot.y > 0)
+                ? (int)mouse_snapshot.y / 16
+                : (int)mouse_snapshot.y / 16 - 1;
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 1;
                 mapa.setForma(mapa_forma);
+            }
+        }
+    }
+
+    private void spawnEnemy() {
+        if (enemigos.size() >= 5) return;
+
+        Enemy nuevoEnemigo = new Enemy("Frames.png", 16, 16);
+        int columna = (int)(Math.random() * mapa_forma[0].length);
+
+        for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
+            if (mapa_forma[fila][columna] != 0) {
+                float x = columna * 16;
+                float y = -fila * 16 + 16;
+                nuevoEnemigo.setPosicion(x, y);
+                enemigos.add(nuevoEnemigo);
             }
         }
     }
