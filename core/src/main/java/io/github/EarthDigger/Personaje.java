@@ -17,7 +17,8 @@ public class Personaje {
     private Sprite sprite;
 
     private int cantSaltos = 0;
-    private int vida = 5;
+    private int vidaTotal = 5;
+    private ArrayList<Texture> vida = new ArrayList<>();
     private int bloqueEquipado = 1;
 
     private float velocidadY = 0;
@@ -45,6 +46,11 @@ public class Personaje {
         this.alto = alto;
         this.posX = 0;
         this.posY = 0;
+
+        this.vida = new ArrayList<>();
+        for (int i = 0; i < vidaTotal; i++) {
+            vida.add(new Texture(Gdx.files.internal("corazonTexture.png")));
+        }
 
         Texture spriteSheet = new Texture(Gdx.files.internal(rutaSpriteSheet));
         TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16); // 6x6 pero usamos 3 filas x 2 columnas
@@ -234,13 +240,17 @@ public class Personaje {
 
     public void recibirGolpe() {
         if (!muerto && tiempoDesdeUltimoGolpe >= COOLDOWN_GOLPE) {
-            vida--;
-            System.out.println("El personaje recibio un golpe!\nVida restante: " + vida);
+            vida.removeFirst();
+            System.out.println("El personaje recibio un golpe!\nVida restante: " + vida.size());
             tiempoDesdeUltimoGolpe = 0f;
-            if (vida <= 0) {
+            if (vida.isEmpty()) {
                 muerto = true;
                 System.out.println("Has muerto...");
             }
         }
+    }
+
+    public ArrayList<Texture> getVida() {
+        return vida;
     }
 }

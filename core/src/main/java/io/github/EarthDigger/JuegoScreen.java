@@ -120,6 +120,9 @@ public class JuegoScreen implements Screen {
         //CARGAR SPRITES
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
+        for (int i = 0; i < personaje.getVida().size(); i++) {
+            spriteBatch.draw(personaje.getVida().get(i), camera.position.x + viewport.getWorldWidth() / 2f - 20 - i*16, camera.position.y + viewport.getWorldHeight() / 2f - 20, 16, 16);
+        }
         for (Bloque bloque : bloques) {
             spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
         }
