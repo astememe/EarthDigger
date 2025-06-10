@@ -18,7 +18,7 @@ public class JuegoScreen implements Screen {
     //Fondo
     private boolean esDia = true;
     private float tiempoTranscurrido = 0f;
-    private final float intervaloCambio = 10f; // cambiar cada 10 segundos, por ejemplo
+    private final float intervaloCambio = 30f;
     private Texture fondoDia;
     private Texture fondoNoche;
     private Texture fondoActual;
@@ -47,8 +47,8 @@ public class JuegoScreen implements Screen {
 
     @Override
     public void show() {
-        fondoDia = new Texture("FONDOS\\fondodiaprueba.png");
-        fondoNoche = new Texture("FONDOS\\fondonocheprueba.jpg");
+        fondoDia = new Texture("FONDOS\\dia.png");
+        fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screenSizeX, screenSizeY);
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
@@ -65,7 +65,7 @@ public class JuegoScreen implements Screen {
         Assets.load();
         mapa.rellenarMapa(bloques);
 
-        personaje = new Personaje("Frames.png", 16, 16);
+        personaje = new Personaje("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
     }
 
     @Override
@@ -88,7 +88,6 @@ public class JuegoScreen implements Screen {
         spriteBatch.begin();
         spriteBatch.draw(fondoActual, 0, -mapa_forma.length*16, 180*16, 20*16);
         spriteBatch.end();
-
 
         //CARGAR SPRITES
         spriteBatch.setProjectionMatrix(camera.combined);
@@ -141,17 +140,20 @@ public class JuegoScreen implements Screen {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverIzquierda((float) (delta*1.2));
+                personaje.moverIzquierda((float) (delta*1.5));
             }
             personaje.moverIzquierda(delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)){
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                personaje.moverDerecha(delta*2);
+                personaje.moverDerecha((float) (delta*1.5));
             }
             personaje.moverDerecha(delta);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) personaje.saltar();
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipado(1);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipado(2);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipado(3);
 
 
         //POSICION RATON, ROMPER BLOQUES, PONER BLOQUES
@@ -181,7 +183,7 @@ public class JuegoScreen implements Screen {
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1) {
-                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 1;
+                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = personaje.getBloqueEquipado();
                 mapa.setForma(mapa_forma);
             }
         }

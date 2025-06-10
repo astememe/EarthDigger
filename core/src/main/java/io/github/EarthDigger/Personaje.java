@@ -21,6 +21,7 @@ public class Personaje {
     private boolean mirandoDerecha = true;
     private boolean moviendose = false;
     private int cantSaltos = 0;
+    private int bloqueEquipado = 1;
 
     private Animation<TextureRegion> caminarDerechaAnim;
     private Animation<TextureRegion> caminarIzquierdaAnim;
@@ -61,9 +62,6 @@ public class Personaje {
         quietoFrames[0] = tmp[2][0];
         quietoFrames[1] = tmp[2][1];
         quietoAnim = new Animation<>(1f, quietoFrames); // más lenta si quieres que parpadee o respire
-
-        frameActual = quietoFrames[0];
-        stateTime = 0f;
 
         frameActual = quietoFrames[0];
         stateTime = 0f;
@@ -170,4 +168,11 @@ public class Personaje {
     public float getAncho() { return ancho; }
     public float getAlto() { return alto; }
 
+    public int getBloqueEquipado() {
+        return bloqueEquipado;
+    }
+
+    public void setBloqueEquipado(int bloqueEquipado) {
+        this.bloqueEquipado = bloqueEquipado;
+    }
 }

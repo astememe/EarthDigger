@@ -9,9 +9,9 @@ public class Assets {
     public static Texture piedraTexture;
 
     public static void load() {
-        cespedTexture = new Texture(Gdx.files.internal("cespedfinal2.png"));
+        cespedTexture = new Texture(Gdx.files.internal("cespedfinal.png"));
         tierraTexture = new Texture(Gdx.files.internal("bloquetierra.png"));
-        piedraTexture = new Texture(Gdx.files.internal("piedra.png"));
+        piedraTexture = new Texture(Gdx.files.internal("piedraFINAL.png"));
     }
 
     public static void dispose() {
