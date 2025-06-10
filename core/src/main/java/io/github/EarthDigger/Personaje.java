@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Personaje {
     private float delta = Gdx.graphics.getDeltaTime();
@@ -19,7 +20,9 @@ public class Personaje {
     private int cantSaltos = 0;
     private int vidaTotal = 5;
     private ArrayList<Texture> vida = new ArrayList<>();
-    private int bloqueEquipado = 1;
+    private int bloqueEquipadoNum = 1;
+    private ArrayList<Texture> inventario = new ArrayList<>();
+    private int monedasCant = 0;
 
     private float velocidadY = 0;
     private float gravedadNormal = -100;
@@ -35,6 +38,9 @@ public class Personaje {
     private boolean mirandoDerecha = true;
     private boolean moviendose = false;
     private boolean muerto = false;
+
+    private Random random = new Random();
+    private boolean cavado = false;
 
     private Animation<TextureRegion> caminarDerechaAnim;
     private Animation<TextureRegion> caminarIzquierdaAnim;
@@ -52,29 +58,31 @@ public class Personaje {
             vida.add(new Texture(Gdx.files.internal("corazonTexture.png")));
         }
 
-        Texture spriteSheet = new Texture(Gdx.files.internal(rutaSpriteSheet));
-        TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16); // 6x6 pero usamos 3 filas x 2 columnas
+        this.inventario = new ArrayList<>();
+        inventario.add(Assets.cespedTexture);
+        inventario.add(Assets.tierraTexture);
+        inventario.add(Assets.piedraTexture);
 
-        // Animación caminar derecha (fila 0)
+        Texture spriteSheet = new Texture(Gdx.files.internal(rutaSpriteSheet));
+        TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16);
+
+        // Animación caminar derecha
         TextureRegion[] caminarDerechaFrames = new TextureRegion[2];
         caminarDerechaFrames[0] = tmp[0][0];
         caminarDerechaFrames[1] = tmp[0][1];
-        caminarDerechaAnim = new Animation<>(0.35f, caminarDerechaFrames);
+        caminarDerechaAnim = new Animation<>(0.5f, caminarDerechaFrames);
 
-        // Animación caminar izquierda (fila 1)
+        // Animación caminar izquierda
         TextureRegion[] caminarIzquierdaFrames = new TextureRegion[2];
         caminarIzquierdaFrames[0] = tmp[1][0];
         caminarIzquierdaFrames[1] = tmp[1][1];
-        caminarIzquierdaAnim = new Animation<>(0.35f, caminarIzquierdaFrames);
+        caminarIzquierdaAnim = new Animation<>(0.5f, caminarIzquierdaFrames);
 
-        // Animación quieto (fila 2)
+        // Animación quieto
         TextureRegion[] quietoFrames = new TextureRegion[2];
         quietoFrames[0] = tmp[2][0];
         quietoFrames[1] = tmp[2][1];
         quietoAnim = new Animation<>(1f, quietoFrames);
-
-        frameActual = quietoFrames[0];
-        stateTime = 0f;
 
         frameActual = quietoFrames[0];
         stateTime = 0f;
@@ -225,12 +233,12 @@ public class Personaje {
     public float getAncho() { return ancho; }
     public float getAlto() { return alto; }
 
-    public int getBloqueEquipado() {
-        return bloqueEquipado;
+    public int getBloqueEquipadoNum() {
+        return bloqueEquipadoNum;
     }
 
-    public void setBloqueEquipado(int bloqueEquipado) {
-        this.bloqueEquipado = bloqueEquipado;
+    public void setBloqueEquipadoNum(int bloqueEquipado) {
+        this.bloqueEquipadoNum = bloqueEquipado;
     }
     public void setPosicion(float x, float y) {
         this.posX = x;
@@ -252,5 +260,28 @@ public class Personaje {
 
     public ArrayList<Texture> getVida() {
         return vida;
+    }
+
+    public ArrayList<Texture> getInventario() {
+        return inventario;
+    }
+
+    public void conseguirMoneda() {
+        int check = random.nextInt(1, 10);
+        if (cavado && check == 1) {
+            monedasCant++;
+        }
+    }
+
+    public int getMonedasCant() {
+        return monedasCant;
+    }
+
+    public void setCavado(boolean cavado) {
+        this.cavado = cavado;
+    }
+
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 }

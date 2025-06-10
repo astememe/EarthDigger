@@ -6,7 +6,6 @@ public class Enemy extends Personaje {
     private boolean mirandoDerecha = true;
     private boolean moviendose = false;
     private float stateTime = 0f;
-    Personaje personaje;
 
     public Enemy(String rutaSpriteSheet, float ancho, float alto) {
         super(rutaSpriteSheet, ancho, alto);

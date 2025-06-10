@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,6 +16,10 @@ import java.util.ArrayList;
 
 public class JuegoScreen implements Screen {
     //Fondo
+    private Texture pescaoTexture = new Texture("pescao.png");
+    private Texture pinyaTexture = new Texture("images.jpg");
+    private boolean easterEgg = false;
+
     private boolean esDia = false;
     private float tiempoTranscurrido = 0f;
     private final float intervaloCambio = 60f; // cambiar cada 10 segundos, por ejemplo
@@ -90,6 +95,7 @@ public class JuegoScreen implements Screen {
 
         camera.update();
 
+
         // ACTUALIZAR ENEMIGOS Y COLISIONES
         for (Enemy enemigo : enemigos) {
             enemigo.reiniciarSaltos(delta, bloques);
@@ -123,18 +129,28 @@ public class JuegoScreen implements Screen {
         for (int i = 0; i < personaje.getVida().size(); i++) {
             spriteBatch.draw(personaje.getVida().get(i), camera.position.x + viewport.getWorldWidth() / 2f - 20 - i*16, camera.position.y + viewport.getWorldHeight() / 2f - 20, 16, 16);
         }
+
+        spriteBatch.draw(personaje.getInventario().get(personaje.getBloqueEquipadoNum() - 1), camera.position.x + viewport.getWorldWidth() / 2f - 20, camera.position.y + viewport.getWorldHeight() / 2f - 20 - 16, 16, 16);
+
         for (Bloque bloque : bloques) {
             spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
         }
 
-        // DIBUJAR ENEMIGOS - MODIFICADO: ahora sí se dibujan
-        for (Enemy enemigo : enemigos) {
-            enemigo.dibujar(spriteBatch);
+
+        if (!easterEgg) {
+            for (Enemy enemigo : enemigos) {
+                enemigo.dibujar(spriteBatch);
+            }
+            personaje.dibujar(spriteBatch);
+        } else {
+            for (Enemy enemigo : enemigos) {
+                spriteBatch.draw(pescaoTexture, enemigo.getX(), enemigo.getY(), 16,16);
+            }
+            spriteBatch.draw(pinyaTexture, personaje.getX(), personaje.getY(), 16, 16);
         }
 
-        // DIBUJAR PERSONAJE (que estaba después de los enemigos)
-        personaje.dibujar(spriteBatch);
-
+        String monedasText = "Monedas: "+ personaje.getMonedasCant();
+        Assets.font.draw(spriteBatch, monedasText, camera.position.x - viewport.getWorldWidth() / 2f + 20, camera.position.y + viewport.getWorldHeight() / 2f - 20);
         spriteBatch.end();
 
         stage.act(delta);
@@ -146,6 +162,9 @@ public class JuegoScreen implements Screen {
         mapa.rellenarMapa(bloques);
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
+
+        //EASTER EGG
+        pinya(personaje);
 
 
         //LA CAMARA SIGUE AL PERSONAJE UWU
@@ -199,9 +218,9 @@ public class JuegoScreen implements Screen {
             personaje.moverDerecha(delta);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) personaje.saltar();
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipado(1);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipado(2);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipado(3);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipadoNum(1);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipadoNum(2);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipadoNum(3);
 
 
         //POSICION RATON, ROMPER BLOQUES, PONER BLOQUES
@@ -220,6 +239,11 @@ public class JuegoScreen implements Screen {
             if (-true_mouse_position[1] != mapa_forma.length - 1 ) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
+
+                //CONSEGUIR MONEDA 10%
+                personaje.setCavado(true);
+                personaje.conseguirMoneda();
+                personaje.setCavado(false);
             }
         }
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
@@ -232,7 +256,7 @@ public class JuegoScreen implements Screen {
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] == 0) {
-                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = personaje.getBloqueEquipado();
+                mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = personaje.getBloqueEquipadoNum();
                 mapa.setForma(mapa_forma);
             }
         }
@@ -256,21 +280,26 @@ public class JuegoScreen implements Screen {
             if (columna >= mapa_forma[0].length) columna = mapa_forma[0].length - 1;
         }
 
-        boolean foundSpawnSpot = false;
-        for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
+        for (int fila = mapa_forma.length - 1; fila >= 0 && mapa_forma[fila][columna] != 0; fila--) {
             if (mapa_forma[fila][columna] != 0) {
                 spawnX = columna * 16;
                 spawnY = -fila * 16 + 16;
                 nuevoEnemigo.setPosicion(spawnX, spawnY);
                 enemigos.add(nuevoEnemigo);
-                foundSpawnSpot = true;
                 System.out.println("Enemigo generado en: X=" + spawnX + ", Y=" + spawnY);
-                break;
             }
         }
+    }
 
-        if (!foundSpawnSpot) {
-            System.out.println("No se encontró un punto de spawn válido para el enemigo en la columna: " + columna);
+    public void pinya(Personaje personaje) {
+        if (personaje.getVida().size() == 5 && personaje.getMonedasCant() == 10 && Gdx.input.isKeyPressed(Input.Keys.P)){
+            if (Gdx.input.isKeyPressed(Input.Keys.I)) {
+                if (Gdx.input.isKeyPressed(Input.Keys.N)) {
+                    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                        easterEgg = true;
+                    }
+                }
+            }
         }
     }
 
