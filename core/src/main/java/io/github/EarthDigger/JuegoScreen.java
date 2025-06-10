@@ -168,7 +168,7 @@ public class JuegoScreen implements Screen {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
-            if (-true_mouse_position[1] != mapa_forma.length - 1) {
+            if (-true_mouse_position[1] != mapa_forma.length - 1 ) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
             }
@@ -182,7 +182,7 @@ public class JuegoScreen implements Screen {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
-            if (-true_mouse_position[1] != mapa_forma.length - 1) {
+            if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] == 0) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = personaje.getBloqueEquipado();
                 mapa.setForma(mapa_forma);
             }
