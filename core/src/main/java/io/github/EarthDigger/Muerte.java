@@ -63,7 +63,7 @@ public class Muerte implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.getBatch().begin();
-        stage.getBatch().draw(muertoTexture, Gdx.graphics.getWidth()/2f - (float) muertoTexture.getWidth() /2, 0 + (float) muertoTexture.getHeight() /2, muertoTexture.getWidth(), muertoTexture.getHeight());
+        stage.getBatch().draw(muertoTexture, Gdx.graphics.getWidth()/2f - (float) muertoTexture.getWidth() /2, (float) muertoTexture.getHeight() /2 + muertoTexture.getHeight(), muertoTexture.getWidth(), muertoTexture.getHeight());
         stage.getBatch().end();
 
         stage.act(delta);

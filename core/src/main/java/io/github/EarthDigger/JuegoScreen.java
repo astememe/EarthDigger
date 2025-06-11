@@ -71,12 +71,14 @@ public class JuegoScreen implements Screen {
     //Bloques
     private ArrayList<Bloque> bloques;
 
+    //Musica
+    Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
+
     public JuegoScreen(EarthDigger game) {
         this.game = game;
     }
 
     public void MusicaFondo(){
-        Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
         musicaFondo.setLooping(true);
         musicaFondo.setVolume(0.5f);
         musicaFondo.play();
@@ -428,5 +430,6 @@ public class JuegoScreen implements Screen {
         fondoNoche.dispose();
         pescaoTexture.dispose();
         pinyaTexture.dispose();
+        musicaFondo.dispose();
     }
 }
