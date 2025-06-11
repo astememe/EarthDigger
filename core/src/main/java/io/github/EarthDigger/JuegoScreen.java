@@ -24,7 +24,7 @@ public class JuegoScreen implements Screen {
     private float delta;
 
     //Fondo
-    private boolean esDia = false;
+    private boolean esDia = true;
     private float tiempoTranscurrido = 0f;
     private final float intervaloCambio = 60f; // cambiar cada 60 segundos, por ejemplo
     private Texture fondoDia;
@@ -207,13 +207,12 @@ public class JuegoScreen implements Screen {
         }
 
         // Control del tiempo de spawn para Enemy2
-        if (!esDia) {
-            tiempoDesdeUltimoSpawn2 += delta;
-            if (tiempoDesdeUltimoSpawn2 >= intervaloSpawn2) {
-                spawnEnemy2();
-                tiempoDesdeUltimoSpawn2 = 0f;
-            }
+        tiempoDesdeUltimoSpawn2 += delta;
+        if (tiempoDesdeUltimoSpawn2 >= intervaloSpawn2) {
+            spawnEnemy2();
+            tiempoDesdeUltimoSpawn2 = 0f;
         }
+
 
         for (int i = enemigos2.size() - 1; i >= 0; i--) {
             Enemy2 e2 = enemigos2.get(i);
