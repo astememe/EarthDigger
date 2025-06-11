@@ -2,6 +2,7 @@ package io.github.EarthDigger;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -74,8 +75,16 @@ public class JuegoScreen implements Screen {
         this.game = game;
     }
 
+    public void MusicaFondo(){
+        Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
+        musicaFondo.setLooping(true);
+        musicaFondo.setVolume(0.5f);
+        musicaFondo.play();
+    }
+
     @Override
     public void show() {
+        MusicaFondo();
         fondoDia = new Texture("FONDOS\\dia.png");
         fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
@@ -106,6 +115,18 @@ public class JuegoScreen implements Screen {
                 break;
             }
         }
+    }
+
+    public void sonidoBloquePoner(){
+        Sound ponerBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\ColocarBloque.mp3"));
+        long idPonerBloque = ponerBloque.play();
+        ponerBloque.setVolume(idPonerBloque, 1f);
+    }
+
+    public void sonidoBloqueQuitar(){
+        Sound quitarBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\ColocarBloque.mp3"));
+        long idQuitarBloque = quitarBloque.play();
+        quitarBloque.setVolume(idQuitarBloque, 1f);
     }
 
     @Override
@@ -261,6 +282,7 @@ public class JuegoScreen implements Screen {
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             mouse_snapshot = mouse_position;
+            sonidoBloqueQuitar();
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
@@ -280,6 +302,7 @@ public class JuegoScreen implements Screen {
         }
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             mouse_snapshot = mouse_position;
+            sonidoBloquePoner();
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
