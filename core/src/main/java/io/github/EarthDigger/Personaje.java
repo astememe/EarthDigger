@@ -18,7 +18,7 @@ public class Personaje {
     private Sprite sprite;
 
     private int cantSaltos = 0;
-    private int vidaTotal = 5;
+    private int vidaTotal = 1;
     private ArrayList<Texture> vida = new ArrayList<>();
     private int bloqueEquipadoNum = 1;
     private ArrayList<Texture> inventario = new ArrayList<>();
