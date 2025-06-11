@@ -1,38 +1,41 @@
 package io.github.EarthDigger;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 
 public class Enemy2 extends Personaje {
-    private float velocidadX = 50f;
-    private Animation<TextureRegion> caminarDerechaAnim;
-    private float stateTime;
-    private Rectangle enemigo2hitbox;
+    private boolean mirandoDerecha = true;
+    private boolean moviendose = false;
+    private float stateTime = 0f;
 
-    public Enemy2(String sprite, float x, float y) {
-        super(sprite, x, y);
-        caminarDerechaAnim = Assets.getEnemy2WalkRight();
-        stateTime = 0f;
-        enemigo2hitbox = new Rectangle(x, y, 16, 32);
+    public Enemy2(String rutaSpriteSheet, float ancho, float alto) {
+        super(rutaSpriteSheet, ancho, alto);
     }
 
+    public void mover(Enemy2 enemy2, float delta, float velocidad) {
+        this.setPosX(getX() + delta * velocidad);
+        this.mirandoDerecha = true;
+        this.moviendose = true;
+    }
 
+    @Override
     public void update(float delta) {
-        setPosicion(getX() + velocidadX * delta, getY());
-        enemigo2hitbox.setPosition(getX(), getY());
+        super.update(delta);
         stateTime += delta;
+        if (moviendose) {
+            if (mirandoDerecha) {
+                setFrameActual(getCaminarDerechaAnim().getKeyFrame(stateTime, true));
+            } else {
+                setFrameActual(getCaminarIzquierdaAnim().getKeyFrame(stateTime, true));
+            }
+        } else {
+            setFrameActual(getQuietoAnim().getKeyFrame(stateTime, true));
+        }
+        getHitbox().setPosition(getX(), getY());
+        moviendose = false;
     }
 
+    @Override
     public void dibujar(SpriteBatch batch) {
-        TextureRegion frame = caminarDerechaAnim.getKeyFrame(stateTime, true);
-        batch.draw(frame, getX(), getY(), 16, 32);
-    }
-
-    public Rectangle getHitbox() {
-        return enemigo2hitbox;
+        batch.draw(getFrameActual(), getX(), getY(), getAncho(), getAlto());
     }
 }

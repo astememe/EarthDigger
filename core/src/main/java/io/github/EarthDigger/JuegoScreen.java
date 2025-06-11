@@ -115,22 +115,6 @@ public class JuegoScreen implements Screen {
 
         camera.update();
 
-        // ACTUALIZAR ENEMIGOS Y COLISIONES
-        for (Enemy enemigo : enemigos) {
-            enemigo.reiniciarSaltos(delta, bloques);
-            enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
-            enemigo.update(delta);
-
-            // Verificar colisión dentro del bucle
-            if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
-                personaje.recibirGolpe();
-            }
-        }
-
-        for (Enemy2 enemigo2 : enemigos2) {
-            enemigo2.dibujar(spriteBatch);
-        }
-
         stage.act(delta);
         stage.draw();
 
@@ -161,6 +145,9 @@ public class JuegoScreen implements Screen {
         if (!easterEgg) {
             for (Enemy enemigo : enemigos) {
                 enemigo.dibujar(spriteBatch);
+            }
+            for (Enemy2 enemy2:enemigos2) {
+                enemy2.dibujar(spriteBatch);
             }
             personaje.dibujar(spriteBatch);
         } else {
@@ -230,8 +217,7 @@ public class JuegoScreen implements Screen {
 
         for (int i = enemigos2.size() - 1; i >= 0; i--) {
             Enemy2 e2 = enemigos2.get(i);
-            e2.moverDerecha(delta * 2);
-            e2.reiniciarSaltos(delta, bloques);
+            e2.mover(enemigos2.get(i), delta, 80f);
             e2.update(delta);
 
             if (e2.getX() > mapWidth) {
@@ -302,6 +288,29 @@ public class JuegoScreen implements Screen {
                 mapa.setForma(mapa_forma);
             }
         }
+
+        // ACTUALIZAR ENEMIGOS Y COLISIONES
+        for (Enemy enemigo : enemigos) {
+            enemigo.reiniciarSaltos(delta, bloques);
+            enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
+            enemigo.update(delta);
+
+            // Verificar colisión dentro del bucle
+            if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
+                personaje.recibirGolpe();
+            }
+        }
+
+        for (Enemy2 enemigo2 : enemigos2) {
+            enemigo2.reiniciarSaltos(delta, bloques);
+            enemigo2.mover(enemigo2, delta, 80f);
+            enemigo2.update(delta);
+
+            // Verificar colisión dentro del bucle
+            if (enemigo2.getHitbox().overlaps(personaje.getHitbox())) {
+                personaje.recibirGolpe();
+            }
+        }
     }
 
     private void spawnEnemy() {
@@ -335,14 +344,23 @@ public class JuegoScreen implements Screen {
 
     private void spawnEnemy2() {
         if (enemigos2.size() >= 3) return;
+        Enemy2 nuevoEnemigo2 = new Enemy2("PERSONAJEACTUALIZADO\\Frames.png", 16, 32);
 
-        float spawnX = 0;
-        float spawnY = personaje.getY();
+        float spawnX;
+        float spawnY;
+        int columna;
+        columna = (int) ((camera.position.x - viewport.getWorldWidth() / 2f - 32) / 16);
+        if (columna < 0) columna = 0;
 
-        Enemy2 nuevo = new Enemy2("PERSONAJEACTUALIZADO/Frames.png", spawnX, spawnY);
-        enemigos2.add(nuevo);
-
-        System.out.println("Enemy2 generado en x=" + spawnX + ", y=" + spawnY);
+        for (int fila = mapa_forma.length - 1; fila >= 0 && mapa_forma[fila][columna] != 0; fila--) {
+            if (mapa_forma[fila][columna] != 0) {
+                spawnX = columna * 16;
+                spawnY = -fila * 16 + 16;
+                nuevoEnemigo2.setPosicion(spawnX, spawnY);
+                break;
+            }
+        }
+        enemigos2.add(nuevoEnemigo2);
     }
 
     private void pinya(Personaje personaje) {
