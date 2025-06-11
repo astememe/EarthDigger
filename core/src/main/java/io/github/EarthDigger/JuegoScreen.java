@@ -24,7 +24,7 @@ public class JuegoScreen implements Screen {
     private float delta;
 
     //Fondo
-    private boolean esDia = false;
+    private boolean esDia = true;
     private float tiempoTranscurrido = 0f;
     private final float intervaloCambio = 60f; // cambiar cada 60 segundos, por ejemplo
     private Texture fondoDia;
@@ -93,7 +93,7 @@ public class JuegoScreen implements Screen {
         Assets.load();
         mapa.rellenarMapa(bloques);
 
-        personaje = new Personaje("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
+        personaje = new Personaje("PERSONAJE\\Frames.png", 16, 16);
 
         int columnaInicial = 1;
         for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
@@ -153,6 +153,9 @@ public class JuegoScreen implements Screen {
         } else {
             for (Enemy enemigo : enemigos) {
                 spriteBatch.draw(pescaoTexture, enemigo.getX(), enemigo.getY(), 16,16);
+            }
+            for (Enemy2 enemy2:enemigos2) {
+                enemy2.dibujar(spriteBatch);
             }
             spriteBatch.draw(pinyaTexture, personaje.getX(), personaje.getY(), 16, 16);
         }
