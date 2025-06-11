@@ -11,8 +11,10 @@ public class Enemy2 extends Personaje {
         super(rutaSpriteSheet, ancho, alto);
     }
 
-    public void moverse(){
-
+    public void mover(Enemy2 enemy2, float delta, float velocidad) {
+        this.setPosX(getX() + delta * velocidad);
+        this.mirandoDerecha = true;
+        this.moviendose = true;
     }
 
     @Override
