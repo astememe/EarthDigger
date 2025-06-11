@@ -1,6 +1,7 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,7 +25,7 @@ public class JuegoScreen implements Screen {
     private float delta;
 
     //Fondo
-    private boolean esDia = true;
+    private boolean esDia = false;
     private float tiempoTranscurrido = 0f;
     private final float intervaloCambio = 60f;
     private Texture fondoDia;
@@ -82,6 +83,7 @@ public class JuegoScreen implements Screen {
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
+
 
         mapa = new Mapa();
         mapa_forma = mapa.getForma();
@@ -318,7 +320,7 @@ public class JuegoScreen implements Screen {
     private void spawnEnemy() {
         if (enemigos.size() >= 5) return;
 
-        Enemy nuevoEnemigo = new Enemy("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
+        Enemy nuevoEnemigo = new Enemy("ENEMIGOS\\SLIMETEXTURES.png", 16, 16);
         float spawnX;
         float spawnY = 0;
 
@@ -346,7 +348,7 @@ public class JuegoScreen implements Screen {
 
     private void spawnEnemy2() {
         if (enemigos2.size() >= 3) return;
-        Enemy2 nuevoEnemigo2 = new Enemy2("subir a git\\Ciclope.png", 16, 32);
+        Enemy2 nuevoEnemigo2 = new Enemy2("ENEMIGOS\\CICLOPE.png", 16, 32);
 
         float spawnX;
         float spawnY;

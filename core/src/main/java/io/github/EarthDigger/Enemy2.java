@@ -16,7 +16,7 @@ public class Enemy2 extends Personaje {
     public Enemy2(String rutaSpriteSheet, float ancho, float alto) {
         super(rutaSpriteSheet, ancho, alto);
 
-        Texture spriteSheetCicplope = new Texture(Gdx.files.internal("subir a git\\Ciclope.png"));
+        Texture spriteSheetCicplope = new Texture(Gdx.files.internal("ENEMIGOS\\CICLOPE.png"));
         TextureRegion[][] tmp = TextureRegion.split(spriteSheetCicplope, 16, 32);
 
         TextureRegion[] caminarDerechaCiclopeFrames = new TextureRegion[2];
