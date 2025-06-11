@@ -71,12 +71,14 @@ public class JuegoScreen implements Screen {
     //Bloques
     private ArrayList<Bloque> bloques;
 
+    //Musica
+    Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
+
     public JuegoScreen(EarthDigger game) {
         this.game = game;
     }
 
     public void MusicaFondo(){
-        Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
         musicaFondo.setLooping(true);
         musicaFondo.setVolume(0.25f);
         musicaFondo.play();
@@ -338,10 +340,13 @@ public class JuegoScreen implements Screen {
             enemigo2.mover(enemigo2, delta, 80f);
             enemigo2.update(delta);
 
-            // Verificar colisión dentro del bucle
             if (enemigo2.getHitbox().overlaps(personaje.getHitbox())) {
                 personaje.recibirGolpe();
             }
+        }
+
+        if (personaje.getVida().isEmpty()) {
+            game.setScreen(new Muerte(game));
         }
     }
 
@@ -430,5 +435,6 @@ public class JuegoScreen implements Screen {
         fondoNoche.dispose();
         pescaoTexture.dispose();
         pinyaTexture.dispose();
+        musicaFondo.dispose();
     }
 }
