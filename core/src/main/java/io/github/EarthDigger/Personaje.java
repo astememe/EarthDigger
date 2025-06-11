@@ -22,7 +22,7 @@ public class Personaje {
     private ArrayList<Texture> vida = new ArrayList<>();
     private int bloqueEquipadoNum = 1;
     private ArrayList<Texture> inventario = new ArrayList<>();
-    private int monedasCant = 0;
+    private int monedasCant = 10;
 
     private float velocidadY = 0;
     private float gravedadNormal = -100;

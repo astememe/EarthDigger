@@ -1,6 +1,7 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,9 +25,9 @@ public class JuegoScreen implements Screen {
     private float delta;
 
     //Fondo
-    private boolean esDia = true;
+    private boolean esDia = false;
     private float tiempoTranscurrido = 0f;
-    private final float intervaloCambio = 60f; // cambiar cada 60 segundos, por ejemplo
+    private final float intervaloCambio = 60f;
     private Texture fondoDia;
     private Texture fondoNoche;
     private Texture fondoActual;
@@ -40,8 +41,8 @@ public class JuegoScreen implements Screen {
     //Enemigos
     private ArrayList<Enemy> enemigos = new ArrayList<>();
     private float tiempoDesdeUltimoSpawn = 0f;
-    private float intervaloSpawn = 5; // Tiempo de aparición de los enemigos tipo 1.
-    private float velocidadEnemigos = 20f; // Velocidad de los enemigos tipo 1.
+    private float intervaloSpawn = 5;
+    private float velocidadEnemigos = 20f;
 
     //Enemigos 2
     private ArrayList<Enemy2> enemigos2 = new ArrayList<>();
@@ -82,6 +83,7 @@ public class JuegoScreen implements Screen {
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
+
 
         mapa = new Mapa();
         mapa_forma = mapa.getForma();
@@ -210,13 +212,12 @@ public class JuegoScreen implements Screen {
         }
 
         // Control del tiempo de spawn para Enemy2
-        if (!esDia) {
-            tiempoDesdeUltimoSpawn2 += delta;
-            if (tiempoDesdeUltimoSpawn2 >= intervaloSpawn2) {
-                spawnEnemy2();
-                tiempoDesdeUltimoSpawn2 = 0f;
-            }
+        tiempoDesdeUltimoSpawn2 += delta;
+        if (tiempoDesdeUltimoSpawn2 >= intervaloSpawn2) {
+            spawnEnemy2();
+            tiempoDesdeUltimoSpawn2 = 0f;
         }
+
 
         for (int i = enemigos2.size() - 1; i >= 0; i--) {
             Enemy2 e2 = enemigos2.get(i);
@@ -319,7 +320,7 @@ public class JuegoScreen implements Screen {
     private void spawnEnemy() {
         if (enemigos.size() >= 5) return;
 
-        Enemy nuevoEnemigo = new Enemy("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
+        Enemy nuevoEnemigo = new Enemy("ENEMIGOS\\SLIMETEXTURES.png", 16, 16);
         float spawnX;
         float spawnY = 0;
 
@@ -347,7 +348,7 @@ public class JuegoScreen implements Screen {
 
     private void spawnEnemy2() {
         if (enemigos2.size() >= 3) return;
-        Enemy2 nuevoEnemigo2 = new Enemy2("PERSONAJEACTUALIZADO\\Frames.png", 16, 32);
+        Enemy2 nuevoEnemigo2 = new Enemy2("ENEMIGOS\\CICLOPE.png", 16, 32);
 
         float spawnX;
         float spawnY;
@@ -382,12 +383,16 @@ public class JuegoScreen implements Screen {
     public void resize(int width, int height) {
         viewport.update(width, height);
     }
+
     @Override
     public void pause() {}
+
     @Override
     public void resume() {}
+
     @Override
     public void hide() {}
+
     @Override
     public void dispose() {
         spriteBatch.dispose();
