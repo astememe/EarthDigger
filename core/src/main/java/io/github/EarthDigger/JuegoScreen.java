@@ -363,9 +363,15 @@ public class JuegoScreen implements Screen {
         enemigos2.add(nuevoEnemigo2);
     }
 
-    private void pinya(Personaje personaje) {
-        if (personaje.getX() > 450 && personaje.getY() > 100) {
-            easterEgg = true;
+    public void pinya(Personaje personaje) {
+        if (personaje.getVida().size() == 5 && personaje.getMonedasCant() == 10 && Gdx.input.isKeyPressed(Input.Keys.P)){
+            if (Gdx.input.isKeyPressed(Input.Keys.I)) {
+                if (Gdx.input.isKeyPressed(Input.Keys.N)) {
+                    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                        easterEgg = true;
+                    }
+                }
+            }
         }
     }
 
