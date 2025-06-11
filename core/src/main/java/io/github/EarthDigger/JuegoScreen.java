@@ -26,7 +26,7 @@ public class JuegoScreen implements Screen {
     //Fondo
     private boolean esDia = false;
     private float tiempoTranscurrido = 0f;
-    private final float intervaloCambio = 60f; // cambiar cada 60 segundos, por ejemplo
+    private final float intervaloCambio = 60f;
     private Texture fondoDia;
     private Texture fondoNoche;
     private Texture fondoActual;
@@ -40,14 +40,13 @@ public class JuegoScreen implements Screen {
     //Enemigos
     private ArrayList<Enemy> enemigos = new ArrayList<>();
     private float tiempoDesdeUltimoSpawn = 0f;
-    private float intervaloSpawn = 5; // Tiempo de aparición de los enemigos tipo 1.
-    private float velocidadEnemigos = 20f; // Velocidad de los enemigos tipo 1.
+    private float intervaloSpawn = 5;
+    private float velocidadEnemigos = 20f;
 
     //Enemigos 2
     private ArrayList<Enemy2> enemigos2 = new ArrayList<>();
     private float intervaloSpawn2 = 15f;
     private float tiempoDesdeUltimoSpawn2 = 0f;
-
 
     //Mapa
     private Mapa mapa;
@@ -121,7 +120,6 @@ public class JuegoScreen implements Screen {
             enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
             enemigo.update(delta);
 
-            // Verificar colisión dentro del bucle
             if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
                 personaje.recibirGolpe();
             }
@@ -169,7 +167,6 @@ public class JuegoScreen implements Screen {
             }
             spriteBatch.draw(pinyaTexture, personaje.getX(), personaje.getY(), 16, 16);
         }
-
         String monedasText = "Monedas: "+ personaje.getMonedasCant();
         Assets.font.draw(spriteBatch, monedasText, camera.position.x - viewport.getWorldWidth() / 2f + 20, camera.position.y + viewport.getWorldHeight() / 2f - 20);
         spriteBatch.end();
@@ -186,18 +183,18 @@ public class JuegoScreen implements Screen {
         //EASTER EGG
         pinya(personaje);
 
-        //LA CAMARA SIGUE AL PERSONAJE UWU
+        //LA CAMARA SIGUE AL PERSONAJE
         camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
         camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
 
         //CAMBIO DE FONDO
         tiempoTranscurrido += delta;
         if (tiempoTranscurrido >= intervaloCambio) {
-            esDia = !esDia; // cambia entre día y noche
+            esDia = !esDia;
             tiempoTranscurrido = 0f;
         }
 
-        //BLOQUEAR LA CAMARA AL LLEGAR AL BORDE DE LA PANTALLA
+        //BLOQUEAR LA CAMARA AL LLEGAR AL BORDE
         if (camera.position.x < viewport.getWorldWidth() / 2f) {
             camera.position.x = viewport.getWorldWidth() / 2f;
         } else if (camera.position.x > mapWidth - viewport.getWorldWidth() / 2f) {
@@ -216,33 +213,8 @@ public class JuegoScreen implements Screen {
                 tiempoDesdeUltimoSpawn = 0f;
             }
         } else {
-            enemigos.clear(); // Eliminar enemigos tipo 1 cuando es de día
+            enemigos.clear();
         }
-
-        // Control del tiempo de spawn para Enemy2
-        if (!esDia) {
-            tiempoDesdeUltimoSpawn2 += delta;
-            if (tiempoDesdeUltimoSpawn2 >= intervaloSpawn2) {
-                spawnEnemy2();
-                tiempoDesdeUltimoSpawn2 = 0f;
-            }
-        }
-
-        for (int i = enemigos2.size() - 1; i >= 0; i--) {
-            Enemy2 e2 = enemigos2.get(i);
-            e2.moverDerecha(delta * 2);
-            e2.reiniciarSaltos(delta, bloques);
-            e2.update(delta);
-
-            if (e2.getX() > mapWidth) {
-                enemigos2.remove(i);
-            }
-
-            if (e2.getHitbox().overlaps(personaje.getHitbox())) {
-                personaje.recibirGolpe();
-            }
-        }
-
 
         //CONTROLES
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -281,8 +253,6 @@ public class JuegoScreen implements Screen {
             if (-true_mouse_position[1] != mapa_forma.length - 1 ) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
-
-                //CONSEGUIR MONEDA 10%
                 personaje.setCavado(true);
                 personaje.conseguirMoneda();
                 personaje.setCavado(false);
@@ -355,12 +325,16 @@ public class JuegoScreen implements Screen {
     public void resize(int width, int height) {
         viewport.update(width, height);
     }
+
     @Override
     public void pause() {}
+
     @Override
     public void resume() {}
+
     @Override
     public void hide() {}
+
     @Override
     public void dispose() {
         spriteBatch.dispose();
