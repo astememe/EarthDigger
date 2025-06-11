@@ -4,7 +4,6 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,39 +14,60 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
 
 public class JuegoScreen implements Screen {
-    //Fondo
+    //EasterEgg
     private Texture pescaoTexture = new Texture("pescao.png");
     private Texture pinyaTexture = new Texture("images.jpg");
     private boolean easterEgg = false;
 
+    //Game
+    private EarthDigger game;
+    private float delta;
+
+    //Fondo
     private boolean esDia = false;
     private float tiempoTranscurrido = 0f;
-    private final float intervaloCambio = 60f; // cambiar cada 10 segundos, por ejemplo
+    private final float intervaloCambio = 60f; // cambiar cada 60 segundos, por ejemplo
     private Texture fondoDia;
     private Texture fondoNoche;
     private Texture fondoActual;
 
+    //Sprite
+    private SpriteBatch spriteBatch;
 
-    private EarthDigger game;
+    //Personaje
+    private Personaje personaje;
+
+    //Enemigos
+    private ArrayList<Enemy> enemigos = new ArrayList<>();
+    private float tiempoDesdeUltimoSpawn = 0f;
+    private float intervaloSpawn = 5; // Tiempo de aparición de los enemigos tipo 1.
+    private float velocidadEnemigos = 20f; // Velocidad de los enemigos tipo 1.
+
+    //Enemigos 2
+    private ArrayList<Enemy2> enemigos2 = new ArrayList<>();
+    private float intervaloSpawn2 = 15f;
+    private float tiempoDesdeUltimoSpawn2 = 0f;
+
+
+    //Mapa
+    private Mapa mapa;
+    private int mapWidth;
     private Stage stage;
+    private int[][] mapa_forma;
+
+    //Pantalla
+    private int screenSizeX = 16*30;
     private Viewport viewport;
     private OrthographicCamera camera;
-    private SpriteBatch spriteBatch;
-    private Personaje personaje;
-    private Mapa mapa;
-    private ArrayList<Bloque> bloques;
-    private int[][] mapa_forma;
+    private int screenSizeY = 48;
+
+    //Mouse
     private Vector3 mouse_position = new Vector3(0,0,0);
     private Vector3 mouse_snapshot = new Vector3(0,0,0);
     private int[] true_mouse_position = new int[2];
-    private int screenSizeX = 16*30;
-    private int screenSizeY = 48;
-    private float delta;
-    private int mapWidth;
-    private float tiempoDesdeUltimoSpawn = 0f;
-    private float intervaloSpawn = 5; // Tiempo de aparición de los enemigos.
-    private ArrayList<Enemy> enemigos = new ArrayList<>();
-    private float velocidadEnemigos = 20f; // Velocidad de los enemigos.
+
+    //Bloques
+    private ArrayList<Bloque> bloques;
 
     public JuegoScreen(EarthDigger game) {
         this.game = game;
@@ -95,7 +115,6 @@ public class JuegoScreen implements Screen {
 
         camera.update();
 
-
         // ACTUALIZAR ENEMIGOS Y COLISIONES
         for (Enemy enemigo : enemigos) {
             enemigo.reiniciarSaltos(delta, bloques);
@@ -106,6 +125,10 @@ public class JuegoScreen implements Screen {
             if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
                 personaje.recibirGolpe();
             }
+        }
+
+        for (Enemy2 enemigo2 : enemigos2) {
+            enemigo2.dibujar(spriteBatch);
         }
 
         stage.act(delta);
@@ -122,7 +145,6 @@ public class JuegoScreen implements Screen {
         spriteBatch.draw(fondoActual, 0, -mapa_forma.length*16, 180*16, 20*16);
         spriteBatch.end();
 
-
         //CARGAR SPRITES
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
@@ -135,7 +157,6 @@ public class JuegoScreen implements Screen {
         for (Bloque bloque : bloques) {
             spriteBatch.draw(bloque.getTextura(), bloque.x, bloque.y, bloque.width, bloque.height);
         }
-
 
         if (!easterEgg) {
             for (Enemy enemigo : enemigos) {
@@ -157,7 +178,6 @@ public class JuegoScreen implements Screen {
         stage.draw();
     }
 
-
     public void logic() {
         mapa.rellenarMapa(bloques);
         personaje.reiniciarSaltos(delta, bloques);
@@ -166,11 +186,9 @@ public class JuegoScreen implements Screen {
         //EASTER EGG
         pinya(personaje);
 
-
         //LA CAMARA SIGUE AL PERSONAJE UWU
         camera.position.x = personaje.getX() + personaje.getAncho() / 2f;
         camera.position.y = personaje.getY() + personaje.getAlto() / 2f;
-
 
         //CAMBIO DE FONDO
         tiempoTranscurrido += delta;
@@ -178,7 +196,6 @@ public class JuegoScreen implements Screen {
             esDia = !esDia; // cambia entre día y noche
             tiempoTranscurrido = 0f;
         }
-
 
         //BLOQUEAR LA CAMARA AL LLEGAR AL BORDE DE LA PANTALLA
         if (camera.position.x < viewport.getWorldWidth() / 2f) {
@@ -191,6 +208,7 @@ public class JuegoScreen implements Screen {
             camera.position.y = viewport.getWorldHeight() / 2f - 16 * (mapa.getForma().length - 1);
         }
 
+        // Control del tiempo de spawn para Enemy
         if (!esDia) {
             tiempoDesdeUltimoSpawn += delta;
             if (tiempoDesdeUltimoSpawn >= intervaloSpawn) {
@@ -198,8 +216,33 @@ public class JuegoScreen implements Screen {
                 tiempoDesdeUltimoSpawn = 0f;
             }
         } else {
-            enemigos.clear(); //Para que desaparezcan los enemigos cuando sea de dia.
+            enemigos.clear(); // Eliminar enemigos tipo 1 cuando es de día
         }
+
+        // Control del tiempo de spawn para Enemy2
+        if (!esDia) {
+            tiempoDesdeUltimoSpawn2 += delta;
+            if (tiempoDesdeUltimoSpawn2 >= intervaloSpawn2) {
+                spawnEnemy2();
+                tiempoDesdeUltimoSpawn2 = 0f;
+            }
+        }
+
+        for (int i = enemigos2.size() - 1; i >= 0; i--) {
+            Enemy2 e2 = enemigos2.get(i);
+            e2.moverDerecha(delta * 2);
+            e2.reiniciarSaltos(delta, bloques);
+            e2.update(delta);
+
+            if (e2.getX() > mapWidth) {
+                enemigos2.remove(i);
+            }
+
+            if (e2.getHitbox().overlaps(personaje.getHitbox())) {
+                personaje.recibirGolpe();
+            }
+        }
+
 
         //CONTROLES
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -221,7 +264,6 @@ public class JuegoScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipadoNum(1);
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipadoNum(2);
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipadoNum(3);
-
 
         //POSICION RATON, ROMPER BLOQUES, PONER BLOQUES
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -285,32 +327,48 @@ public class JuegoScreen implements Screen {
                 spawnX = columna * 16;
                 spawnY = -fila * 16 + 16;
                 nuevoEnemigo.setPosicion(spawnX, spawnY);
-                enemigos.add(nuevoEnemigo);
-                System.out.println("Enemigo generado en: X=" + spawnX + ", Y=" + spawnY);
+                break;
             }
+        }
+        enemigos.add(nuevoEnemigo);
+    }
+
+    private void spawnEnemy2() {
+        if (enemigos2.size() >= 3) return;
+
+        float spawnX = 0;
+        float spawnY = personaje.getY();
+
+        Enemy2 nuevo = new Enemy2("PERSONAJEACTUALIZADO/Frames.png", spawnX, spawnY);
+        enemigos2.add(nuevo);
+
+        System.out.println("Enemy2 generado en x=" + spawnX + ", y=" + spawnY);
+    }
+
+    private void pinya(Personaje personaje) {
+        if (personaje.getX() > 450 && personaje.getY() > 100) {
+            easterEgg = true;
         }
     }
 
-    public void pinya(Personaje personaje) {
-        if (personaje.getVida().size() == 5 && personaje.getMonedasCant() == 10 && Gdx.input.isKeyPressed(Input.Keys.P)){
-            if (Gdx.input.isKeyPressed(Input.Keys.I)) {
-                if (Gdx.input.isKeyPressed(Input.Keys.N)) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                        easterEgg = true;
-                    }
-                }
-            }
-        }
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
     }
-
-
-    @Override public void resize(int width, int height) { viewport.update(width, height); }
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {}
-    @Override public void dispose() {
-        personaje.dispose();
+    @Override
+    public void pause() {}
+    @Override
+    public void resume() {}
+    @Override
+    public void hide() {}
+    @Override
+    public void dispose() {
         spriteBatch.dispose();
+        personaje.dispose();
         Assets.dispose();
+        fondoDia.dispose();
+        fondoNoche.dispose();
+        pescaoTexture.dispose();
+        pinyaTexture.dispose();
     }
 }

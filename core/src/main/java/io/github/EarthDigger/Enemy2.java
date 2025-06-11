@@ -1,39 +1,38 @@
 package io.github.EarthDigger;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Enemy2 extends Personaje {
-    private boolean mirandoDerecha = true;
-    private boolean moviendose = false;
-    private float stateTime = 0f;
+    private float velocidadX = 50f;
+    private Animation<TextureRegion> caminarDerechaAnim;
+    private float stateTime;
+    private Rectangle enemigo2hitbox;
 
-    public Enemy2(String rutaSpriteSheet, float ancho, float alto) {
-        super(rutaSpriteSheet, ancho, alto);
+    public Enemy2(String sprite, float x, float y) {
+        super(sprite, x, y);
+        caminarDerechaAnim = Assets.getEnemy2WalkRight();
+        stateTime = 0f;
+        enemigo2hitbox = new Rectangle(x, y, 16, 32);
     }
 
-    public void moverse(){
 
-    }
-
-    @Override
     public void update(float delta) {
-        super.update(delta);
+        setPosicion(getX() + velocidadX * delta, getY());
+        enemigo2hitbox.setPosition(getX(), getY());
         stateTime += delta;
-        if (moviendose) {
-            if (mirandoDerecha) {
-                setFrameActual(getCaminarDerechaAnim().getKeyFrame(stateTime, true));
-            } else {
-                setFrameActual(getCaminarIzquierdaAnim().getKeyFrame(stateTime, true));
-            }
-        } else {
-            setFrameActual(getQuietoAnim().getKeyFrame(stateTime, true));
-        }
-        getHitbox().setPosition(getX(), getY());
-        moviendose = false;
     }
 
-    @Override
     public void dibujar(SpriteBatch batch) {
-        batch.draw(getFrameActual(), getX(), getY(), getAncho(), getAlto());
+        TextureRegion frame = caminarDerechaAnim.getKeyFrame(stateTime, true);
+        batch.draw(frame, getX(), getY(), 16, 32);
+    }
+
+    public Rectangle getHitbox() {
+        return enemigo2hitbox;
     }
 }
