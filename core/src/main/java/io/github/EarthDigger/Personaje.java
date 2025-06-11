@@ -55,7 +55,7 @@ public class Personaje {
 
         this.vida = new ArrayList<>();
         for (int i = 0; i < vidaTotal; i++) {
-            vida.add(new Texture(Gdx.files.internal("corazonTexture.png")));
+            vida.add(new Texture(Gdx.files.internal("PERSONAJE\\corazon.png")));
         }
 
         this.inventario = new ArrayList<>();
