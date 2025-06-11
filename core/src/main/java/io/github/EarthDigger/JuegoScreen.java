@@ -78,7 +78,7 @@ public class JuegoScreen implements Screen {
     public void MusicaFondo(){
         Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
         musicaFondo.setLooping(true);
-        musicaFondo.setVolume(0.5f);
+        musicaFondo.setVolume(0.25f);
         musicaFondo.play();
     }
 
@@ -124,9 +124,15 @@ public class JuegoScreen implements Screen {
     }
 
     public void sonidoBloqueQuitar(){
-        Sound quitarBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\ColocarBloque.mp3"));
+        Sound quitarBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\EliminarBloque.mp3"));
         long idQuitarBloque = quitarBloque.play();
         quitarBloque.setVolume(idQuitarBloque, 1f);
+    }
+
+    public void sonidoCambioBloque(){
+        Sound cambioBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\CambioBloques.mp3"));
+        long idCambioBloque = cambioBloque.play();
+        cambioBloque.setVolume(idCambioBloque, 1f);
     }
 
     @Override
@@ -282,18 +288,17 @@ public class JuegoScreen implements Screen {
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             mouse_snapshot = mouse_position;
-            sonidoBloqueQuitar();
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
             } else {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+                sonidoBloqueQuitar();
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
-            if (-true_mouse_position[1] != mapa_forma.length - 1 &&                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] != 0) {
+            if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] != 0) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
-
                 //CONSEGUIR MONEDA 10%
                 personaje.setCavado(true);
                 personaje.conseguirMoneda();
@@ -302,12 +307,12 @@ public class JuegoScreen implements Screen {
         }
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             mouse_snapshot = mouse_position;
-            sonidoBloquePoner();
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
             } else {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+                sonidoBloquePoner();
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] == 0) {
