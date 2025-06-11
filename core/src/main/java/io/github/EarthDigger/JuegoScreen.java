@@ -93,7 +93,7 @@ public class JuegoScreen implements Screen {
         Assets.load();
         mapa.rellenarMapa(bloques);
 
-        personaje = new Personaje("PERSONAJEACTUALIZADO\\Frames.png", 16, 16);
+        personaje = new Personaje("PERSONAJE\\Frames.png", 16, 16);
 
         int columnaInicial = 1;
         for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {
@@ -153,6 +153,9 @@ public class JuegoScreen implements Screen {
         } else {
             for (Enemy enemigo : enemigos) {
                 spriteBatch.draw(pescaoTexture, enemigo.getX(), enemigo.getY(), 16,16);
+            }
+            for (Enemy2 enemy2:enemigos2) {
+                enemy2.dibujar(spriteBatch);
             }
             spriteBatch.draw(pinyaTexture, personaje.getX(), personaje.getY(), 16, 16);
         }
@@ -263,7 +266,7 @@ public class JuegoScreen implements Screen {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
-            if (-true_mouse_position[1] != mapa_forma.length - 1 ) {
+            if (-true_mouse_position[1] != mapa_forma.length - 1 &&                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] != 0) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
 
