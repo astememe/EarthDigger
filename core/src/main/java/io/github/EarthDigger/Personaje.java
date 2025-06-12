@@ -19,13 +19,14 @@ public class Personaje {
     private Sprite sprite;
 
     private int cantSaltos = 0;
-    private int vidaTotal = 1;
+    private int vidaTotal = 5;
     private ArrayList<Texture> vida = new ArrayList<>();
     private int bloqueEquipadoNum = 1;
     private ArrayList<Texture> inventario = new ArrayList<>();
-    private int monedasCant = 10;
+    private int monedasCant = 0;
 
     private float velocidadY = 0;
+    private float velocidadX = 32;
     private float gravedadNormal = -100;
     private float gravedadCaida = -300;
     private float stateTime;
@@ -92,13 +93,13 @@ public class Personaje {
     }
 
     public void moverIzquierda(float delta) {
-        posX -= delta * 32;
+        posX -= delta * velocidadX;
         moviendose = true;
         mirandoDerecha = false;
     }
 
     public void moverDerecha(float delta) {
-        posX += delta * 32;
+        posX += delta * velocidadX;
         moviendose = true;
         mirandoDerecha = true;
     }
@@ -150,6 +151,11 @@ public class Personaje {
         }
 
         personajeHitbox.setPosition(posX, posY);
+    }
+
+    public void comprarVelocidad() {
+        this.monedasCant = monedasCant - 10;
+        this.velocidadX +=8;
     }
 
     public void update(float delta) {
