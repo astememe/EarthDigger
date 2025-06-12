@@ -73,10 +73,9 @@ public class Juego implements Screen {
         this.game = game;
     }
 
-
-
     @Override
     public void show() {
+        Audios.getInstance().reanudarMusica();
         fondoDia = new Texture("FONDOS\\dia.png");
         fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
@@ -254,9 +253,18 @@ public class Juego implements Screen {
             personaje.moverDerecha(delta);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) personaje.saltar();
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipadoNum(1);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipadoNum(2);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipadoNum(3);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)){
+            personaje.setBloqueEquipadoNum(1);
+            Audios.getInstance().sonidoCambioBloque();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)){
+            personaje.setBloqueEquipadoNum(2);
+            Audios.getInstance().sonidoCambioBloque();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            personaje.setBloqueEquipadoNum(3);
+            Audios.getInstance().sonidoCambioBloque();
+        }
 
         //POSICION RATON, ROMPER BLOQUES, PONER BLOQUES
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);

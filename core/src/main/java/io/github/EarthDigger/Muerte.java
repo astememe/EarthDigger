@@ -24,6 +24,7 @@ public class Muerte implements Screen {
 
     @Override
     public void show() {
+
         muertoTexture = new Texture(Gdx.files.internal("HASMUERTO.png"));
 
         stage = new Stage(new ScreenViewport());
@@ -43,6 +44,8 @@ public class Muerte implements Screen {
                 game.setScreen(new Juego(game));
             }
         });
+
+
 
         TextButton exitButton = new TextButton("Salir", skin);
         exitButton.addListener(new ClickListener() {
