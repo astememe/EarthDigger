@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Juego implements Screen {
     //EasterEgg
@@ -39,7 +40,9 @@ public class Juego implements Screen {
 
     //Enemigos
     private ArrayList<Enemy> enemigos = new ArrayList<>();
+    private ArrayList<Enemy> enemigosBajoTierra = new ArrayList<>();
     private float tiempoDesdeUltimoSpawn = 0f;
+    private float tiempoDesdeUltimoSpawnBajoTierra = 0f;
     private float intervaloSpawn = 5;
     private float velocidadEnemigos = 20f;
 
@@ -75,6 +78,7 @@ public class Juego implements Screen {
 
     @Override
     public void show() {
+        Audios.getInstance().playMusicaFondo();
         fondoDia = new Texture("FONDOS\\dia.png");
         fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
@@ -151,6 +155,9 @@ public class Juego implements Screen {
             for (Enemy2 enemy2:enemigos2) {
                 enemy2.dibujar(spriteBatch);
             }
+            for (Enemy enemigoBajoTierra : enemigosBajoTierra) {
+                enemigoBajoTierra.dibujar(spriteBatch);
+            }
             personaje.dibujar(spriteBatch);
         } else {
             for (Enemy enemigo : enemigos) {
@@ -159,11 +166,18 @@ public class Juego implements Screen {
             for (Enemy2 enemy2:enemigos2) {
                 enemy2.dibujar(spriteBatch);
             }
+            for (Enemy enemigoBajoTierra : enemigosBajoTierra) {
+                enemigoBajoTierra.dibujar(spriteBatch);
+            }
             spriteBatch.draw(pinyaTexture, personaje.getX(), personaje.getY(), 16, 16);
         }
 
         String monedasText = "Monedas: "+ personaje.getMonedasCant();
         Assets.font.draw(spriteBatch, monedasText, camera.position.x - viewport.getWorldWidth() / 2f + 20, camera.position.y + viewport.getWorldHeight() / 2f - 20);
+        String mejoraVelocidad = "Pulsa \"E\" para comprar mejora de velocidad";
+        if (personaje.getMonedasCant() >= 10) {
+            Assets.font.draw(spriteBatch, mejoraVelocidad, camera.position.x - viewport.getWorldWidth() / 2f + 20, camera.position.y + viewport.getWorldHeight() / 2f - 40);
+        }
         spriteBatch.end();
 
         stage.act(delta);
@@ -209,7 +223,18 @@ public class Juego implements Screen {
                 tiempoDesdeUltimoSpawn = 0f;
             }
         } else {
-            enemigos.clear(); // Eliminar enemigos cuando es de día
+            enemigos.clear();
+        }
+
+
+        if (!esDia) {
+            tiempoDesdeUltimoSpawnBajoTierra += delta;
+            if (tiempoDesdeUltimoSpawnBajoTierra >= intervaloSpawn) {
+                spawnEnemyBajoTierra();
+                tiempoDesdeUltimoSpawnBajoTierra = 0f;
+            }
+        } else {
+            enemigosBajoTierra.clear();
         }
 
         // Control del tiempo de spawn para Enemy2
@@ -315,6 +340,17 @@ public class Juego implements Screen {
             }
         }
 
+        for (Enemy enemigoBajoTierra : enemigosBajoTierra) {
+            enemigoBajoTierra.reiniciarSaltos(delta, bloques);
+            enemigoBajoTierra.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
+            enemigoBajoTierra.update(delta);
+
+            // Verificar colisión dentro del bucle
+            if (enemigoBajoTierra.getHitbox().overlaps(personaje.getHitbox())) {
+                personaje.recibirGolpe();
+            }
+        }
+
         for (Enemy2 enemigo2 : enemigos2) {
             enemigo2.reiniciarSaltos(delta, bloques);
             enemigo2.mover(enemigo2, delta, 80f);
@@ -327,6 +363,46 @@ public class Juego implements Screen {
 
         if (personaje.getVida().isEmpty()) {
             game.setScreen(new Muerte(game));
+        }
+
+        //MEJORA DE VEVLOCIDAD
+        if (personaje.getMonedasCant() >=10) {
+            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                personaje.comprarVelocidad();
+            }
+        }
+
+        if ((int)personaje.getY()/16 < -16) {
+
+        }
+    }
+
+    private void spawnEnemyBajoTierra() {
+        if (enemigosBajoTierra.size() >= 2) return;
+
+        int capaPersonaje = -(int)personaje.getY()/16;
+        int posXPersonaje = (int)personaje.getX()/16;
+        if (capaPersonaje != 16) return;
+
+        Enemy nuevoEnemigoBajoTierra = new Enemy("ENEMIGOS\\SLIMETEXTURES.png", 16, 16);
+
+        int distanciaDerecha = 0;
+        for (int dx = 1; dx <= 10 && (posXPersonaje + dx < mapa_forma[0].length && mapa_forma[capaPersonaje][posXPersonaje + dx] == 0); dx++) {
+            distanciaDerecha = dx;
+        }
+
+        int distanciaIzquierda = 0;
+        for (int dx = 1; dx <= 10 && posXPersonaje - dx >= 0 && mapa_forma[capaPersonaje][posXPersonaje - dx] == 0; dx++) {
+            distanciaIzquierda = dx;
+        }
+
+        if (distanciaDerecha > distanciaIzquierda && distanciaDerecha >= 4) {
+            nuevoEnemigoBajoTierra.setPosicion((posXPersonaje + distanciaDerecha) * 16, personaje.getY());
+            enemigosBajoTierra.add(nuevoEnemigoBajoTierra);
+        }
+        else if (distanciaIzquierda >= 4) {
+            nuevoEnemigoBajoTierra.setPosicion((posXPersonaje - distanciaIzquierda) * 16, personaje.getY());
+            enemigosBajoTierra.add(nuevoEnemigoBajoTierra);
         }
     }
 

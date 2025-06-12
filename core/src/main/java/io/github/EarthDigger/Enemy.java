@@ -76,6 +76,10 @@ public class Enemy extends Personaje {
         moviendose = false;
     }
 
+    public void bajoTierra() {
+
+    }
+
     @Override
     public void dibujar(SpriteBatch batch) {
         batch.draw(getFrameActual(), getX(), getY(), getAncho(), getAlto());
