@@ -1,8 +1,6 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class JuegoScreen implements Screen {
+public class Juego implements Screen {
     //EasterEgg
     private Texture pescaoTexture = new Texture("pescao.png");
     private Texture pinyaTexture = new Texture("images.jpg");
@@ -74,22 +72,13 @@ public class JuegoScreen implements Screen {
     //Bloques
     private ArrayList<Bloque> bloques;
 
-    //Musica
-    Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
-
-    public JuegoScreen(EarthDigger game) {
+    public Juego(EarthDigger game) {
         this.game = game;
-    }
-
-    public void MusicaFondo(){
-        musicaFondo.setLooping(true);
-        musicaFondo.setVolume(0.5f);
-        musicaFondo.play();
     }
 
     @Override
     public void show() {
-        MusicaFondo();
+        Audios.getInstance().playMusicaFondo();
         fondoDia = new Texture("FONDOS\\dia.png");
         fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
@@ -97,7 +86,6 @@ public class JuegoScreen implements Screen {
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
-
 
         mapa = new Mapa();
         mapa_forma = mapa.getForma();
@@ -122,20 +110,10 @@ public class JuegoScreen implements Screen {
         }
     }
 
-    public void sonidoBloquePoner(){
-        Sound ponerBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\ColocarBloque.mp3"));
-        long idPonerBloque = ponerBloque.play();
-        ponerBloque.setVolume(idPonerBloque, 1f);
-    }
-
-    public void sonidoBloqueQuitar(){
-        Sound quitarBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\ColocarBloque.mp3"));
-        long idQuitarBloque = quitarBloque.play();
-        quitarBloque.setVolume(idQuitarBloque, 1f);
-    }
 
     @Override
     public void render(float delta) {
+        Audios.getInstance().reanudarMusica();
         this.delta = delta;
         ScreenUtils.clear(Color.BLACK);
 
@@ -207,6 +185,7 @@ public class JuegoScreen implements Screen {
     }
 
     public void logic() {
+        Audios.getInstance().playMusicaFondo();
         mapa.rellenarMapa(bloques);
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
@@ -298,9 +277,18 @@ public class JuegoScreen implements Screen {
             personaje.moverDerecha(delta);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) personaje.saltar();
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) personaje.setBloqueEquipadoNum(1);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) personaje.setBloqueEquipadoNum(2);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) personaje.setBloqueEquipadoNum(3);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)){
+            personaje.setBloqueEquipadoNum(1);
+            Audios.getInstance().sonidoCambioBloque();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)){
+            personaje.setBloqueEquipadoNum(2);
+            Audios.getInstance().sonidoCambioBloque();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            personaje.setBloqueEquipadoNum(3);
+            Audios.getInstance().sonidoCambioBloque();
+        }
 
         //POSICION RATON, ROMPER BLOQUES, PONER BLOQUES
         mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -308,18 +296,17 @@ public class JuegoScreen implements Screen {
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             mouse_snapshot = mouse_position;
-            sonidoBloqueQuitar();
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
             } else {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+                Audios.getInstance().sonidoBloqueQuitar();
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
-            if (-true_mouse_position[1] != mapa_forma.length - 1 &&                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] != 0) {
+            if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] != 0) {
                 mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] = 0;
                 mapa.setForma(mapa_forma);
-
                 //CONSEGUIR MONEDA 10%
                 personaje.setCavado(true);
                 personaje.conseguirMoneda();
@@ -328,12 +315,12 @@ public class JuegoScreen implements Screen {
         }
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             mouse_snapshot = mouse_position;
-            sonidoBloquePoner();
             true_mouse_position[0] = (int)mouse_snapshot.x/16;
             if (mouse_snapshot.y > 0) {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
             } else {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
+                Audios.getInstance().sonidoBloquePoner();
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] == 0) {
@@ -348,7 +335,6 @@ public class JuegoScreen implements Screen {
             enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
             enemigo.update(delta);
 
-            // Verificar colisión dentro del bucle
             if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
                 personaje.recibirGolpe();
             }
@@ -505,6 +491,5 @@ public class JuegoScreen implements Screen {
         fondoNoche.dispose();
         pescaoTexture.dispose();
         pinyaTexture.dispose();
-        musicaFondo.dispose();
     }
 }

@@ -24,6 +24,7 @@ public class Muerte implements Screen {
 
     @Override
     public void show() {
+
         muertoTexture = new Texture(Gdx.files.internal("HASMUERTO.png"));
 
         stage = new Stage(new ScreenViewport());
@@ -40,9 +41,12 @@ public class Muerte implements Screen {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new JuegoScreen(game));
+                game.setScreen(new Juego(game));
+                Audios.getInstance().pausarMusica();
             }
         });
+
+
 
         TextButton exitButton = new TextButton("Salir", skin);
         exitButton.addListener(new ClickListener() {
@@ -78,11 +82,11 @@ public class Muerte implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        muertoTexture.dispose(); // Importante: liberar la textura
+        muertoTexture.dispose();
     }
 
-    // Métodos no utilizados
-    @Override public void pause() {}
+    @Override public void pause() {
+    }
     @Override public void resume() {}
     @Override public void hide() {}
 }
