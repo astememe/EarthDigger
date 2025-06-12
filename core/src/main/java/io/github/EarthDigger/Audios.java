@@ -19,7 +19,7 @@ public class Audios implements Disposable {
     private Sound sonidoSalto;
     private Sound sonidoMuerte;
     private Sound sonidoGolpe;
-    private Sound iniciarJuego;
+    //private Sound iniciarJuego;
 
     private Audios() {
         musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos/musicaFondo.mp3"));
@@ -30,7 +30,7 @@ public class Audios implements Disposable {
         sonidoSalto = Gdx.audio.newSound(Gdx.files.internal("Sonidos/SonidoSalto.mp3"));
         sonidoMuerte = Gdx.audio.newSound(Gdx.files.internal("Sonidos/SonidoMuerte.mp3"));
         sonidoGolpe = Gdx.audio.newSound(Gdx.files.internal("Sonidos/SonidoGolpe.mp3"));
-        iniciarJuego = Gdx.audio.newSound(Gdx.files.internal("Sonidos/SonidoIniciarJuego"));
+        //iniciarJuego = Gdx.audio.newSound(Gdx.files.internal("Sonidos/SonidoIniciarJuego"));
 
             musicaFondo.setLooping(true);
         musicaFondo.setVolume(0.5f);
@@ -49,10 +49,10 @@ public class Audios implements Disposable {
         }
     }
 
-    public void sonidoIniciarJuego() {
-        long id = iniciarJuego.play();
-        iniciarJuego.setVolume(id, 1f);
-    }
+    //public void sonidoIniciarJuego() {
+    //    long id = iniciarJuego.play();
+    //    iniciarJuego.setVolume(id, 1f);
+    //}
 
     public void sonidoBloquePoner() {
         long id = ponerBloque.play();

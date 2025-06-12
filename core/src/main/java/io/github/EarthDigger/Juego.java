@@ -75,7 +75,6 @@ public class Juego implements Screen {
 
     @Override
     public void show() {
-        Audios.getInstance().reanudarMusica();
         fondoDia = new Texture("FONDOS\\dia.png");
         fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
@@ -108,9 +107,9 @@ public class Juego implements Screen {
     }
 
 
-
     @Override
     public void render(float delta) {
+        Audios.getInstance().reanudarMusica();
         this.delta = delta;
         ScreenUtils.clear(Color.BLACK);
 

@@ -42,6 +42,7 @@ public class Muerte implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new Juego(game));
+                Audios.getInstance().pausarMusica();
             }
         });
 
