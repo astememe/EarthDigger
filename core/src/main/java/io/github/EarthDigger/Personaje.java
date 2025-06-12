@@ -19,7 +19,7 @@ public class Personaje {
     private Sprite sprite;
 
     private int cantSaltos = 0;
-    private int vidaTotal = 5;
+    private int vidaTotal = 2;
     private ArrayList<Texture> vida = new ArrayList<>();
     private int bloqueEquipadoNum = 1;
     private ArrayList<Texture> inventario = new ArrayList<>();
@@ -103,18 +103,13 @@ public class Personaje {
         mirandoDerecha = true;
     }
 
-    public void SonidoSalto(){
-        Sound sonidoSalto = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\SonidoSalto.mp3"));
-        long saltoS = sonidoSalto.play();
-        sonidoSalto.setVolume(saltoS, 1f);
-    }
+
 
     public void saltar() {
         if (cantSaltos < 2) {
             velocidadY = 70;
             saltando = true;
             cantSaltos++;
-            SonidoSalto();
         }
     }
 
@@ -166,7 +161,7 @@ public class Personaje {
         }
 
         personajeHitbox.setPosition(posX, posY);
-        moviendose = false; // reset para el siguiente frame
+        moviendose = false;
 
         //TIEMPO PARA COLISIONES
         tiempoDesdeUltimoGolpe+= (float) (0.5*delta);
@@ -254,17 +249,7 @@ public class Personaje {
         personajeHitbox.setPosition(x, y);
     }
 
-    public void sonidoMuerte(){
-        Sound sonidoMuerte = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\SonidoMuerteReemplazo.mp3"));
-        long Muelto = sonidoMuerte.play();
-        sonidoMuerte.setVolume(Muelto, 0.25f);
-    }
 
-    public void sonidoGolpe(){
-        Sound sonidoGolpe = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\SonidoGolpe.mp3"));
-        long punch = sonidoGolpe.play();
-        sonidoGolpe.setVolume(punch, 0.30f);
-    }
 
     public void recibirGolpe() {
         if (!muerto && tiempoDesdeUltimoGolpe >= COOLDOWN_GOLPE) {
@@ -272,12 +257,13 @@ public class Personaje {
             System.out.println("El personaje recibio un golpe!\nVida restante: " + vida.size());
             tiempoDesdeUltimoGolpe = 0f;
             if (getVida().size() >= 1) {
-                sonidoGolpe();
+                Audios.getInstance().playSonidoGolpe();
             }
             if (vida.isEmpty()) {
                 muerto = true;
                 System.out.println("Has muerto...");
-                sonidoMuerte();
+                Audios.getInstance().playSonidoMuerte();
+                Audios.getInstance().pausarMusica();
             }
         }
     }

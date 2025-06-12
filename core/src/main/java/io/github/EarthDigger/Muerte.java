@@ -40,7 +40,7 @@ public class Muerte implements Screen {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new JuegoScreen(game));
+                game.setScreen(new Juego(game));
             }
         });
 
@@ -78,11 +78,11 @@ public class Muerte implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        muertoTexture.dispose(); // Importante: liberar la textura
+        muertoTexture.dispose();
     }
 
-    // Métodos no utilizados
-    @Override public void pause() {}
+    @Override public void pause() {
+    }
     @Override public void resume() {}
     @Override public void hide() {}
 }

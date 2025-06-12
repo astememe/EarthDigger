@@ -1,8 +1,6 @@
 package io.github.EarthDigger;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 
-public class JuegoScreen implements Screen {
+public class Juego implements Screen {
     //EasterEgg
     private Texture pescaoTexture = new Texture("pescao.png");
     private Texture pinyaTexture = new Texture("images.jpg");
@@ -71,22 +69,14 @@ public class JuegoScreen implements Screen {
     //Bloques
     private ArrayList<Bloque> bloques;
 
-    //Musica
-    Music musicaFondo = Gdx.audio.newMusic(Gdx.files.internal("Sonidos\\musicaFondo.mp3"));
-
-    public JuegoScreen(EarthDigger game) {
+    public Juego(EarthDigger game) {
         this.game = game;
     }
 
-    public void MusicaFondo(){
-        musicaFondo.setLooping(true);
-        musicaFondo.setVolume(0.25f);
-        musicaFondo.play();
-    }
+
 
     @Override
     public void show() {
-        MusicaFondo();
         fondoDia = new Texture("FONDOS\\dia.png");
         fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
@@ -94,7 +84,6 @@ public class JuegoScreen implements Screen {
         viewport = new ExtendViewport(screenSizeX, screenSizeY, camera);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
-
 
         mapa = new Mapa();
         mapa_forma = mapa.getForma();
@@ -119,23 +108,7 @@ public class JuegoScreen implements Screen {
         }
     }
 
-    public void sonidoBloquePoner(){
-        Sound ponerBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\ColocarBloque.mp3"));
-        long idPonerBloque = ponerBloque.play();
-        ponerBloque.setVolume(idPonerBloque, 1f);
-    }
 
-    public void sonidoBloqueQuitar(){
-        Sound quitarBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\EliminarBloque.mp3"));
-        long idQuitarBloque = quitarBloque.play();
-        quitarBloque.setVolume(idQuitarBloque, 1f);
-    }
-
-    public void sonidoCambioBloque(){
-        Sound cambioBloque = Gdx.audio.newSound(Gdx.files.internal("Sonidos\\CambioBloques.mp3"));
-        long idCambioBloque = cambioBloque.play();
-        cambioBloque.setVolume(idCambioBloque, 1f);
-    }
 
     @Override
     public void render(float delta) {
@@ -200,6 +173,7 @@ public class JuegoScreen implements Screen {
     }
 
     public void logic() {
+        Audios.getInstance().playMusicaFondo();
         mapa.rellenarMapa(bloques);
         personaje.reiniciarSaltos(delta, bloques);
         personaje.update(delta);
@@ -237,7 +211,7 @@ public class JuegoScreen implements Screen {
                 tiempoDesdeUltimoSpawn = 0f;
             }
         } else {
-            enemigos.clear(); // Eliminar enemigos tipo 1 cuando es de día
+            enemigos.clear(); // Eliminar enemigos cuando es de día
         }
 
         // Control del tiempo de spawn para Enemy2
@@ -295,7 +269,7 @@ public class JuegoScreen implements Screen {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
             } else {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
-                sonidoBloqueQuitar();
+                Audios.getInstance().sonidoBloqueQuitar();
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] != 0) {
@@ -314,7 +288,7 @@ public class JuegoScreen implements Screen {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16;
             } else {
                 true_mouse_position[1] = (int)mouse_snapshot.y/16 - 1;
-                sonidoBloquePoner();
+                Audios.getInstance().sonidoBloquePoner();
             }
             System.out.println(true_mouse_position[0] + ", " + true_mouse_position[1]);
             if (-true_mouse_position[1] != mapa_forma.length - 1 && mapa_forma[-true_mouse_position[1]][true_mouse_position[0]] == 0) {
@@ -329,7 +303,6 @@ public class JuegoScreen implements Screen {
             enemigo.seguirAlPersonaje(personaje, delta, velocidadEnemigos);
             enemigo.update(delta);
 
-            // Verificar colisión dentro del bucle
             if (enemigo.getHitbox().overlaps(personaje.getHitbox())) {
                 personaje.recibirGolpe();
             }
@@ -435,6 +408,5 @@ public class JuegoScreen implements Screen {
         fondoNoche.dispose();
         pescaoTexture.dispose();
         pinyaTexture.dispose();
-        musicaFondo.dispose();
     }
 }
