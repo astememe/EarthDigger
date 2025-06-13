@@ -21,9 +21,9 @@ public class Personaje {
 
     private int cantSaltos = 0;
     private int vidaTotal = 5;
-    private ArrayList<Texture> vida = new ArrayList<>();
+    private ArrayList<Texture> vida;
     private int bloqueEquipadoNum = 1;
-    private ArrayList<Texture> inventario = new ArrayList<>();
+    private ArrayList<Texture> inventario;
     private int monedasCant = 0;
 
     private float velocidadY = 0;
@@ -259,7 +259,7 @@ public class Personaje {
 
     public void recibirGolpe() {
         if (!muerto && tiempoDesdeUltimoGolpe >= COOLDOWN_GOLPE) {
-            vida.removeFirst();
+            vida.remove(0);
             System.out.println("El personaje recibio un golpe!\nVida restante: " + vida.size());
             tiempoDesdeUltimoGolpe = 0f;
             if (getVida().size() >= 1) {
@@ -283,7 +283,7 @@ public class Personaje {
     }
 
     public void conseguirMoneda() {
-        int check = random.nextInt(1, 10);
+        int check = random.nextInt(10) + 1;
         if (cavado && check == 1) {
             monedasCant++;
         }

@@ -78,7 +78,6 @@ public class Juego implements Screen {
 
     @Override
     public void show() {
-        Audios.getInstance().playMusicaFondo();
         fondoDia = new Texture("FONDOS\\dia.png");
         fondoNoche = new Texture("FONDOS\\noche.png");
         camera = new OrthographicCamera();
@@ -97,7 +96,7 @@ public class Juego implements Screen {
         Assets.load();
         mapa.rellenarMapa(bloques);
 
-        personaje = new Personaje("PERSONAJE\\Frames.png", 16, 16);
+        personaje = new Personaje("PERSONAJE\\frames.png", 16, 16);
 
         int columnaInicial = 1;
         for (int fila = mapa_forma.length - 1; fila >= 0; fila--) {

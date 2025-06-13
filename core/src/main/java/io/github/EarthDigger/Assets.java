@@ -19,7 +19,7 @@ public class Assets {
 
     public static Animation<TextureRegion> getEnemy2WalkRight() {
         if (enemy2WalkRight == null) {
-            Texture spriteSheet = new Texture(Gdx.files.internal("PERSONAJEACTUALIZADO/Frames.png"));
+            Texture spriteSheet = new Texture(Gdx.files.internal("PERSONAJE/frames.png"));
             TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 32, 16);
             TextureRegion[] frames = new TextureRegion[2];
             frames[0] = tmp[0][0];
@@ -31,7 +31,7 @@ public class Assets {
 
     public static void load() {
         cespedTexture = new Texture(Gdx.files.internal("cespedfinal.png"));
-        tierraTexture = new Texture(Gdx.files.internal("bloquetierra.png"));
+        tierraTexture = new Texture(Gdx.files.internal("Bloquetierra.png"));
         piedraTexture = new Texture(Gdx.files.internal("piedraFINAL.png"));
         vidaTexture = new Texture(Gdx.files.internal("corazonTexture.png"));
         font = new BitmapFont();
