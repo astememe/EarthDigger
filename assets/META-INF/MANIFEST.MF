@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Main-Class: io.github.EarthDigger.lwjgl3.Lwjgl3Launcher
+Class-Path: lwjgl-glfw-3.3.3.jar lwjgl-glfw-3.3.3-natives-macos-arm64.ja
+ r gdx-platform-1.13.1-natives-desktop.jar lwjgl-opengl-3.3.3-natives-li
+ nux.jar lwjgl-opengl-3.3.3-natives-windows.jar lwjgl-glfw-3.3.3-natives
+ -linux-arm32.jar lwjgl-jemalloc-3.3.3-natives-windows.jar lwjgl-jemallo
+ c-3.3.3-natives-linux-arm32.jar lwjgl-stb-3.3.3-natives-macos-arm64.jar
+  gdx-1.13.1.jar lwjgl-3.3.3-natives-linux-arm32.jar lwjgl-stb-3.3.3-nat
+ ives-windows.jar lwjgl-3.3.3-natives-windows.jar jorbis-0.0.17.jar lwjg
+ l-jemalloc-3.3.3-natives-macos.jar lwjgl-glfw-3.3.3-natives-windows.jar
+  lwjgl-openal-3.3.3-natives-linux-arm64.jar lwjgl-glfw-3.3.3-natives-ma
+ cos.jar lwjgl-openal-3.3.3-natives-linux.jar lwjgl-opengl-3.3.3.jar lwj
+ gl-openal-3.3.3-natives-linux-arm32.jar lwjgl-jemalloc-3.3.3-natives-li
+ nux.jar lwjgl-opengl-3.3.3-natives-linux-arm32.jar lwjgl-stb-3.3.3-nati
+ ves-linux.jar lwjgl-opengl-3.3.3-natives-linux-arm64.jar lwjgl-openal-3
+ .3.3-natives-windows-x86.jar lwjgl-stb-3.3.3-natives-linux-arm32.jar lw
+ jgl-openal-3.3.3-natives-macos-arm64.jar lwjgl-glfw-3.3.3-natives-windo
+ ws-x86.jar lwjgl-openal-3.3.3.jar lwjgl-stb-3.3.3-natives-macos.jar lwj
+ gl-stb-3.3.3-natives-linux-arm64.jar lwjgl-stb-3.3.3-natives-windows-x8
+ 6.jar lwjgl-opengl-3.3.3-natives-macos-arm64.jar lwjgl-glfw-3.3.3-nativ
+ es-linux-arm64.jar gdx-backend-lwjgl3-1.13.1.jar lwjgl-jemalloc-3.3.3-n
+ atives-windows-x86.jar lwjgl-openal-3.3.3-natives-windows.jar lwjgl-glf
+ w-3.3.3-natives-linux.jar lwjgl-3.3.3-natives-linux-arm64.jar lwjgl-3.3
+ .3-natives-macos.jar gdx-jnigen-loader-2.5.2.jar lwjgl-3.3.3.jar lwjgl-
+ stb-3.3.3.jar lwjgl-jemalloc-3.3.3.jar lwjgl-jemalloc-3.3.3-natives-lin
+ ux-arm64.jar lwjgl-3.3.3-natives-macos-arm64.jar lwjgl-opengl-3.3.3-nat
+ ives-macos.jar lwjgl-opengl-3.3.3-natives-windows-x86.jar lwjgl-3.3.3-n
+ atives-windows-x86.jar lwjgl-jemalloc-3.3.3-natives-macos-arm64.jar lwj
+ gl-3.3.3-natives-linux.jar jlayer-1.0.1-gdx.jar lwjgl-openal-3.3.3-nati
+ ves-macos.jar
+
